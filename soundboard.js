@@ -546,39 +546,6 @@ function longPoll(){
 	});
 }
 
-
-	
-function updateping(){
-	
-	$('#ping').css("color","red");
-	$.cookie("usercolor", $("#usercolor").val(), { expires : 10 });
-	
-	var oldtime = $.now(); 
-
-	var username;
-	if ($('#username').is(":focus"))
-		username = "";
-	else
-		username = $('#username').val();
-	$.ajax({
-			data:{dothis:'getusers',
-			user:username,
-			focus:focusvar,
-			color:usercolor},
-			type:'GET',
-			url:'getshouts.php',
-			success: function (data) {
-				
-			$('#ping').css("color","black");
-			$('#ping').text("\"Ping\": "+($.now()-oldtime));
-			$('#users').replaceWith(data);
-			},
-			error: function (data) {
-			}
-	});
-}
-	
-
 function updatecolor(){
 	console.log(username);
 	$('.' + $('#username').val()).css('color',$("#usercolor").val());
