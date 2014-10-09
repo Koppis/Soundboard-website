@@ -1,0 +1,148 @@
+.textarea {
+    resize: none;
+    width: 2em !important;
+}
+#hideemos {
+	display:block !important; 
+}
+#emoticons {
+	display: none;
+}
+#username {
+	width: 7em !important;
+}
+#tts {
+	width: 13em !important;
+	height: 2em;
+}
+
+html {
+	word-wrap: break-word;
+	word-break:break-all;
+}
+
+#pagelayout>tbody>tr:first-child > td:first-child, .color, #kieli {
+	display:none;
+}
+
+
+#shoutbox table {
+	table-layout: fixed; 
+	width: 100%;
+}
+#shoutbox table td {
+	overflow: hidden; 
+}
+
+#shoutbox table thead {
+	font-weight:bold; 
+}
+#shoutbox table td:nth-child(1),#shoutbox table col:nth-child(1) {
+	display:none;
+}
+
+.hiddenclass{
+	display:hidden;
+}
+html{
+font-family:Trebuchet MS,Tahoma,Verdana,Arial,sans-serif;
+}
+#tjt{
+	font-weight:bold;
+	font-size:large;
+}
+
+/*
+.over{
+	border: 2px dashed #000;
+	background-color:red;
+}*/
+[draggable] {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  /* Required to make elements draggable in old WebKit */
+  -khtml-user-drag: element;
+  -webkit-user-drag: element;
+}
+
+#shoutbox>table>tbody>tr:nth-child(odd){
+	background:#ffFFFF;
+}
+#shoutbox>table>tbody>tr:nth-child(even){
+	background:#D0D0D0;
+}
+.emoticon:hover{
+cursor:pointer;
+}
+
+.username{
+font-weight:bold;
+}
+
+button {
+	background-color:#fff;
+	border:1px solid #c0bfbf;
+	border-radius:6px;
+	padding:8px 5px;
+	min-width:15px;
+	color:#7f7f7f;
+	transition:color .1s linear;
+	-webkit-transition:color .1s linear;
+	-moz-transition:color .1s linear;
+	transition:background-color .1s linear;
+	-webkit-transition:background-color .1s linear;
+	-moz-transition:background-color .1s linear;
+}
+button:hover{
+	background-color:#4d9edd;
+	color:#fff;
+	border-color:#3079b3;
+	cursor: pointer;
+}
+button:disabled{
+	background-color:#EBEBEB;
+	color:#7f7f7f;
+	border-color:#c0bfbf;
+}
+button:disabled:hover{
+    cursor: default;
+}
+div#not_online{
+	position: fixed;
+	top: 120px; left 0px;
+	left: 10%;
+	background-color: rgb(211, 211, 211);
+	border-radius: 10px;
+	border-style: solid;
+	border-color: rgb(0, 255, 235);
+	border-width: 1px;
+	box-shadow: 10px 10px 3px rgba(0,0,0,.2);
+	font-size: -webkit-xxx-large;
+	color: rgb(107, 107, 107);
+	width: 80%;
+	text-align: -webkit-center;	
+}
+
+.ui-tabs .ui-tabs-nav
+{
+background: lightblue;
+}
+
+
+.ui-tabs .ui-widget-header {
+	border: 1px solid lightblue;
+}
+.ui-tabs .ui-tabs-nav .ui-state-active a, .ui-state-active a:link, .ui-state-hover a{
+	color: blue;
+}
+.ui-tabs .ui-tabs-nav .ui-state-hover,  .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover a, .ui-widget-header .ui-state-hover a:link{
+	color: #14779E;
+	border: 0px;
+	background: white;
+}
+.ui-tabs .ui-tabs-nav .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+	border: 0px;
+}
+
