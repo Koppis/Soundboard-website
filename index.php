@@ -9,18 +9,12 @@
 	<link rel="stylesheet" media="(min-device-width: 800px)" type="text/css" href="index.css">
 
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-	<script src="jquery.contextmenu.r2.packed.js"></script>
 	<script src="jquery-ui/jquery-ui.js"></script>
 	<script src="jquery.cookie.js"></script>
 	<script type="text/javascript" src="soundboard.js"></script>
 	<script type="text/javascript" src="jscolor/jscolor.js"></script>
 </head>
-<div class="contextMenu" id="myMenu1">
-      <ul>
-        <li id="delete_sound"><img src="http://i.imgur.com/L9vKEBn.png" /> Delete</li>
-        <li id="edit_sound"><img src="http://i.imgur.com/L9vKEBn.png" /> Edit</li>
-      </ul>
-    </div>
+
 <body style="margin: 0px; padding: 0px; display:none;">
 	
 	<table id="pagelayout" style="height: 100%;" 
