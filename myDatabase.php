@@ -20,7 +20,7 @@ class myDatabase {
     
     protected $db = NULL;
     
-    function __construct($fname = 'sqlitemain') {
+    function __construct($fname = '/var/www/db/sqlitemain') {
         $this->db = new PDO('sqlite:' . $fname);
         $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
         $this->db->exec("pragma synchronous = off;");
