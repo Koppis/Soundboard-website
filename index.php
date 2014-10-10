@@ -398,10 +398,7 @@
 						alt="Linkki" value="Linkki">
 						<button id="addemoticon" >Add emoticon</button>
 						<div id="emoticons_tab">
-							<?php
-								$_POST['dothis'] = 0;
-								include("emoticonssc.php");
-							?>
+							
 						</div>
 					</div>
 					

@@ -6,6 +6,8 @@ var recording = 0;
 var online = 0;
 var t;
 var vitsit_revision = 0;
+var emoticons_revision = 0;
+
 document.title = "Koppislandia";
 focusvar = 1;
 happening = false;
@@ -449,7 +451,8 @@ function longPoll(){
 		users:JSON.stringify(known_users),
         rec:recording,
         online:online,
-        vitsit_revision:vitsit_revision},
+        vitsit_revision:vitsit_revision,
+        emoticons_revision:emoticons_revision},
 		type:'GET',
 		url: 'shoutstream.php',
 		dataType:'json',
@@ -525,6 +528,17 @@ function longPoll(){
                     })
 
                 }
+                if (payload.emoticons != null) {
+                    emoticons_revision = payload.emoticons.pop();
+
+                    $('#emoticons_tab').html('<ul></ul>');
+                    $.each(payload.vitsit, function (i, emo){
+                        $('#emoticons').html($('#emoticons').html() + 
+                        '<img style="max-width:50px;max-height:50px"src="'+emo.linkki+'"/>');
+                    })
+                    
+                }
+
 			}
 		t = setTimeout(longPoll,100);
 		}
