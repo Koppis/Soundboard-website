@@ -29,7 +29,7 @@ class Recordings extends Databasecheck {
         $data = array();
         $result = $this->db->query('SELECT *, rowid FROM recordings');
         foreach ($result as $row) {
-            $data[] = $row['rowid'];
+            $data[] = array('rowid' => $row['rowid'], 'name' => $row['name']);
         }
         
         $data[] = $this->result[0]['revision'];

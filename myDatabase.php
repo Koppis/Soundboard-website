@@ -5,6 +5,7 @@ function initDB ($db) {
     "INSERT INTO changes VALUES ('vitsit',0)",
     "INSERT INTO changes VALUES ('emoticons',0)",
     "INSERT INTO changes VALUES ('recordings',0)",
+    "CREATE TABLE recordings (name varchar(255) DEFAULT '')",
     "CREATE TABLE `emoticons` (  `sana` varchar(255) NOT NULL DEFAULT '',  `linkki` varchar(255) NOT NULL)",
     "CREATE TABLE lol (nimi CHAR(100))",
     "CREATE TABLE online (status INT)",

@@ -9,6 +9,7 @@ var vitsit_revision = -1;
 var emoticons_revision = -1;
 var recordings_revision = -1;
 var deletingrecording = false;
+var renamingrecording = false;
 
 document.title = "Koppislandia";
 focusvar = 1;
@@ -35,6 +36,7 @@ if ((/iPhone|iPod|iPad|Android|BlackBerry/).test(navigator.userAgent)) {
     });
 }) 
 
+
 //poista reconrding
 $('body').on("click",".recording",function(){
 		if (deletingrecording && confirm("Oletko varma, että haluat poistaa aanityksen?")) {
@@ -43,6 +45,14 @@ $('body').on("click",".recording",function(){
 				type: 'POST',
 				url: 'deleterecording.php',
 				data: {rowid:$(this).html()}
+			  });
+        } else if (renamingrecording) { //rename
+            newname = prompt("Anna uusi nimi",$(this).html());
+            renamingrecording = false;
+			$.ajax({
+				type: 'POST',
+				url: 'renamerecording.php',
+				data: {rowid:$(this).attr('title'),newname:newname}
 			  });
         } 
 
@@ -345,6 +355,11 @@ $(document).ready(function(){
     $("#deleterecording").click(function(){
         deletingrecording = true;
     });
+    //Kun painaa rename recordings
+    $("#renamerecording").click(function(){
+        renamingrecording = true;
+    });
+    
     
 
 	//ilmoitusvilkutus
@@ -568,7 +583,7 @@ function longPoll(){
                     $('#recordings').html('');
                     $.each(payload.recordings, function(i, rec) {
                         $('#recordings').html($('#recordings').html() 
-                            + '<button class="sbutton recording" id="sounds\\recorded\\' + (rec) + '.wav" value="sounds\\recorded\\' + (rec) + '.wav">' + (rec) + '</button>');
+                            + '<button class="sbutton recording" title="'+rec.rowid+'" id="sounds\\recorded\\' + (rec.rowid) + '.wav" value="sounds\\recorded\\' + (rec.rowid) + '.wav">' + (rec.name) + '</button>');
                     })
 				}
 
