@@ -51,6 +51,7 @@ while (true) {
     } elseif ($buf == "rd") {
     	$db->exec("UPDATE record SET status=0");
     	$db->exec("INSERT INTO recordings VALUES (1)");
+        $db->exec("UPDATE changes SET revision = revision + 1 WHERE name = 'recordings'");
     }
 
 }

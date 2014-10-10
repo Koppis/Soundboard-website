@@ -37,6 +37,7 @@
 					<br>
 					<div id="processes"></div>
 					<div id="tjt"></div>
+                    <br><button id="recordbutton" class="recordbutton">Record</button>
                     <div id="recordings"></div>
                     <br />
                     <button id="deleterecording">Delete Recording</button>

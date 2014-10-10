@@ -7,7 +7,7 @@ var online = 0;
 var t;
 var vitsit_revision = -1;
 var emoticons_revision = -1;
-var recordings = 0;
+var recordings_revision = -1;
 var deletingrecording = false;
 
 document.title = "Koppislandia";
@@ -463,7 +463,7 @@ function longPoll(){
         online:online,
         vitsit_revision:vitsit_revision,
         emoticons_revision:emoticons_revision,
-        recordings:recordings},
+        recordings_revision:recordings_revision},
 		type:'GET',
 		url: 'shoutstream.php',
 		dataType:'json',
@@ -564,7 +564,8 @@ function longPoll(){
                 }
 				if (payload.recordings != null){
                     console.log(payload.recordings);
-					recordings = payload.recordings[payload.recordings.length - 1];
+					recordings_revision = payload.recordings.pop();
+                    $('#recordings').html('');
                     $.each(payload.recordings, function(i, rec) {
                         $('#recordings').html($('#recordings').html() 
                             + '<button class="sbutton recording" id="sounds\\recorded\\' + (rec) + '.wav" value="sounds\\recorded\\' + (rec) + '.wav">' + (rec) + '</button>');

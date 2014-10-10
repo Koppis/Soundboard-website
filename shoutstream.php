@@ -22,14 +22,17 @@ class DatabaseCheck {
 class Recordings extends Databasecheck {
 	public function __construct($db,$revision) {
 		$this->db = $db;
-		$this->query = "SELECT rowid FROM recordings WHERE rowid > " .  $revision;
+		$this->query = "SELECT revision FROM changes WHERE name = 'recordings' AND revision > $revision";
     }
 
     public function getdata () {
         $data = array();
-        foreach ($this->result as $row) {
+        $result = $this->db->query('SELECT *, rowid FROM recordings');
+        foreach ($result as $row) {
             $data[] = $row['rowid'];
         }
+        
+        $data[] = $this->result[0]['revision'];
         return $data;
     }
 
@@ -179,7 +182,6 @@ class Messages extends DatabaseCheck {
 
 
 
-$recordings = (isset($_GET['recordings']) && !empty($_GET['recordings'])) ? $_GET['recordings']:0;
 $lastRow = (isset($_GET['rowid']) && !empty($_GET['rowid'])) ? $_GET['rowid']:0;
 $kohta = (isset($_GET['kohta']) && !empty($_GET['kohta'])) ? $_GET['kohta'] : 0;
 $user = (isset($_GET['user']) && !empty($_GET['user'])) ? $_GET['user'] : 0;
@@ -190,6 +192,7 @@ $known_users = (isset($_GET['users']) && !empty($_GET['users']))
 $online = (isset($_GET['online']) && !empty($_GET['online'])) ? $_GET['online'] : 0;
 $vitsit_revision = (isset($_GET['vitsit_revision']) && !empty($_GET['vitsit_revision'])) ? $_GET['vitsit_revision'] : 0;    
 $emoticons_revision = (isset($_GET['emoticons_revision']) && !empty($_GET['emoticons_revision'])) ? $_GET['emoticons_revision'] : 0;
+$recordings = (isset($_GET['recordings_revision']) && !empty($_GET['recordings_revision'])) ? $_GET['recordings_revision']:0;
 
 
 
