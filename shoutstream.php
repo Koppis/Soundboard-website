@@ -172,7 +172,7 @@ $known_users = (isset($_GET['users']) && !empty($_GET['users']))
                 ? JSON_decode($_GET['users']) : array();
 $online = (isset($_GET['online']) && !empty($_GET['online'])) ? $_GET['online'] : 0;
 $vitsit_revision = (isset($_GET['vitsit_revision']) && !empty($_GET['vitsit_revision'])) ? $_GET['vitsit_revision'] : 0;    
-$emoticons_revision = (isset($_GET['emoticons_revision']) && !empty($_get['emoticons_revision'])) ? $_get['emoticons_revision'] : 0;
+$emoticons_revision = (isset($_GET['emoticons_revision']) && !empty($_GET['emoticons_revision'])) ? $_GET['emoticons_revision'] : 0;
 
 
 
