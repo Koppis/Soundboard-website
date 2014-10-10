@@ -535,7 +535,9 @@ function longPoll(){
                     $('#emoticons').html('');
                     $.each(payload.emoticons, function (i, emo){
                         $('#emoticons').html($('#emoticons').html() + 
-                        '<img style="max-width:50px;max-height:50px"src="'+emo.linkki+'"/>');
+                        '<img style="max-width:50px;max-height:50px"src="'+emo.linkki+'" alt="'+emo.sana+' class="emoticon""/>');
+
+                        $('#emoticons_tab ul').html($('#emoticons_tab').html() + '<li>'+emo.linkki+'</li>');
                     })
                     
                 }
