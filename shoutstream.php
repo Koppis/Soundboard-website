@@ -163,37 +163,34 @@ class Messages extends DatabaseCheck {
 
 
 
-    $lastRow = (isset($_GET['rowid']) && !empty($_GET['rowid'])) ? $_GET['rowid']:0;
-    $kohta = (isset($_GET['kohta']) && !empty($_GET['kohta'])) ? $_GET['kohta'] : 0;
-    $user = (isset($_GET['user']) && !empty($_GET['user'])) ? $_GET['user'] : 0;
-    $rec = (isset($_GET['rec']) && !empty($_GET['rec'])) ? $_GET['rec'] : 0;
-    $new_rec = $rec;
-    $known_users = (isset($_GET['users']) && !empty($_GET['users'])) 
-                    ? JSON_decode($_GET['users']) : array();
-    $online = (isset($_GET['online']) && !empty($_GET['online'])) ? $_GET['online'] : 0;
-    $vitsit_revision = (isset($_GET['vitsit_revision']) && !empty($_GET['vitsit_revision'])) ? $_GET['vitsit_revision'] : 0;    
-    $emoticons_revision = (isset($_GET['emoticons_revision']) && !empty($_get['emoticons_revision'])) ? $_get['emoticons_revision'] : 0;
+$lastRow = (isset($_GET['rowid']) && !empty($_GET['rowid'])) ? $_GET['rowid']:0;
+$kohta = (isset($_GET['kohta']) && !empty($_GET['kohta'])) ? $_GET['kohta'] : 0;
+$user = (isset($_GET['user']) && !empty($_GET['user'])) ? $_GET['user'] : 0;
+$rec = (isset($_GET['rec']) && !empty($_GET['rec'])) ? $_GET['rec'] : 0;
+$new_rec = $rec;
+$known_users = (isset($_GET['users']) && !empty($_GET['users'])) 
+                ? JSON_decode($_GET['users']) : array();
+$online = (isset($_GET['online']) && !empty($_GET['online'])) ? $_GET['online'] : 0;
+$vitsit_revision = (isset($_GET['vitsit_revision']) && !empty($_GET['vitsit_revision'])) ? $_GET['vitsit_revision'] : 0;    
+$emoticons_revision = (isset($_GET['emoticons_revision']) && !empty($_get['emoticons_revision'])) ? $_get['emoticons_revision'] : 0;
 
 
 
-    $date = date('Y-m-d H:i:s');
-    $time = time();
-    $results = False;
-    $time_wasted=0;
+$date = date('Y-m-d H:i:s');
+$time = time();
+$results = False;
+$time_wasted=0;
 
-if (!debug_backtrace()) {
-    $db = new myDatabase('sqlitemain');
-} else {
-    $db = new myDatabase();
-    if ($user !== 0){
-        if (@$db->exec("INSERT INTO users (name,connected,lastpoll)".
-            " VALUES ('{$user}',1,'{$time}')") == false){
-            $db->exec("UPDATE users SET connected=1, lastpoll={$time}".
-                " WHERE name='{$user}'");
-        }
+$db = new myDatabase();
+if ($user !== 0){
+    if (@$db->exec("INSERT INTO users (name,connected,lastpoll)".
+        " VALUES ('{$user}',1,'{$time}')") == false){
+        $db->exec("UPDATE users SET connected=1, lastpoll={$time}".
+            " WHERE name='{$user}'");
     }
-
 }
+
+
 
 $checks = array();
 $checks['emoticons'] = new Emoticons($db,$emoticons_revision);
