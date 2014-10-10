@@ -36,10 +36,10 @@ class myDatabase {
     }
 
     public /* int */ function exec(/* string */ $str = '') {
-        $ret = @$this->db->exec(str);
+        $ret = @$this->db->exec($str);
         if ($ret === FALSE) {
             initDB($this->db);
-            $ret = $this->db->exec(str);
+            $ret = $this->db->exec($str);
         }
         return $ret;
     } 
