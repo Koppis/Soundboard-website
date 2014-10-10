@@ -38,10 +38,10 @@
 					<div id="processes"></div>
 					<div id="tjt"></div>
                     <br><button id="recordbutton" class="recordbutton">Record</button>
-                    <div id="recordings"></div>
                     <br />
                     <button id="deleterecording">Delete Recording</button>
                     <button id="renamerecording">Rename Recording</button>
+                    <p><div id="recordings"></div></P>
 			</td>
 			<td colspan="1" width="85%" valign="top">
 				<div id="tabs">

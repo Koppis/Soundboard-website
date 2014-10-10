@@ -44,16 +44,18 @@ $('body').on("click",".recording",function(){
 			$.ajax({
 				type: 'POST',
 				url: 'deleterecording.php',
-				data: {rowid:$(this).html()}
+				data: {rowid:$(this).attr('title')}
 			  });
         } else if (renamingrecording) { //rename
             newname = prompt("Anna uusi nimi",$(this).html());
             renamingrecording = false;
+            if (newname != null) {
 			$.ajax({
 				type: 'POST',
 				url: 'renamerecording.php',
 				data: {rowid:$(this).attr('title'),newname:newname}
 			  });
+              }
         } 
 
 	});
@@ -582,8 +584,13 @@ function longPoll(){
 					recordings_revision = payload.recordings.pop();
                     $('#recordings').html('');
                     $.each(payload.recordings, function(i, rec) {
-                        $('#recordings').html($('#recordings').html() 
-                            + '<button class="sbutton recording" title="'+rec.rowid+'" id="sounds\\recorded\\' + (rec.rowid) + '.wav" value="sounds\\recorded\\' + (rec.rowid) + '.wav">' + (rec.name) + '</button>');
+                        name = rec.name
+                        if (rec.name == '1')
+                            name = rec.rowid
+                        $('#recordings').html('<button class="sbutton recording" title="'+rec.rowid+
+                        '" id="sounds\\recorded\\' + (rec.rowid) + '.wav" value="sounds\\recorded\\' +
+                        (rec.rowid) + '.wav">' + (name) + '</button>' +
+                        $('#recordings').html());
                     })
 				}
 
