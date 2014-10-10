@@ -8,6 +8,7 @@ var t;
 var vitsit_revision = -1;
 var emoticons_revision = -1;
 var recordings = 0;
+var deletingrecording = false;
 
 document.title = "Koppislandia";
 focusvar = 1;
@@ -33,6 +34,19 @@ if ((/iPhone|iPod|iPad|Android|BlackBerry/).test(navigator.userAgent)) {
     	async: true
     });
 }) 
+
+//poista reconrding
+$('body').on("click",".recording",function(){
+		if (deletingrecording && confirm("Oletko varma, että haluat poistaa aanityksen?")) {
+            deletingrecording = false;
+			$.ajax({
+				type: 'POST',
+				url: 'deleterecording.php',
+				data: {rowid:$(this).html()}
+			  });
+        } 
+
+	});
 
 //Toista ääni
 $('body').on("click",".sbutton",function(){
@@ -327,6 +341,11 @@ $(document).ready(function(){
 
     });
     
+    //Kun painaa delete recordings
+    $("#deleterecording").click(function(){
+        deletingrecording = true;
+    });
+    
 
 	//ilmoitusvilkutus
 	setInterval(function () {
@@ -548,7 +567,7 @@ function longPoll(){
 					recordings = payload.recordings[payload.recordings.length - 1];
                     $.each(payload.recordings, function(i, rec) {
                         $('#recordings').html($('#recordings').html() 
-                            + '<button class="sbutton" id="sounds\\recorded\\' + (rec) + '.wav" value="sounds\\recorded\\' + (rec) + '.wav">' + (rec) + '</button>');
+                            + '<button class="sbutton recording" id="sounds\\recorded\\' + (rec) + '.wav" value="sounds\\recorded\\' + (rec) + '.wav">' + (rec) + '</button>');
                     })
 				}
 

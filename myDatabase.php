@@ -4,6 +4,7 @@ function initDB ($db) {
     $schema = array("CREATE TABLE changes (name VARCHAR PRIMARY KEY, revision INT)",
     "INSERT INTO changes VALUES ('vitsit',0)",
     "INSERT INTO changes VALUES ('emoticons',0)",
+    "INSERT INTO changes VALUES ('recordings',0)",
     "CREATE TABLE `emoticons` (  `sana` varchar(255) NOT NULL DEFAULT '',  `linkki` varchar(255) NOT NULL)",
     "CREATE TABLE lol (nimi CHAR(100))",
     "CREATE TABLE online (status INT)",
