@@ -1,5 +1,7 @@
 ﻿<?php
 
+require_once('myDatabase.php');
+
 class DatabaseCheck {
 	protected $db = NULL;
 	protected $query = "";
@@ -8,9 +10,7 @@ class DatabaseCheck {
 	}
     // Returns true or false
     public function isnew() {
-    	$db = $this->db;
-    	$q = $db->query($this->query);
-    	$this->result = $q->fetchAll();
+        $this->result = $this->db->query($this->query);
     	if (empty($this->result)){
     		return false;
     	} else {
@@ -28,8 +28,7 @@ class Vitsit extends DatabaseCheck {
 
     public function getdata () {
         $data = array();
-    	$q = $this->db->query('SELECT *, rowid FROM vitsit');
-        $result = $q->fetchall();
+        $result = $this->db->query('SELECT *, rowid FROM vitsit');
         foreach ($result as $row) {
             $data[] = array('used'=>$row['used'],'rowid'=>$row['rowid'],
                             'kieli'=>$row['kieli'],'vitsi'=>$row['vitsi']);
@@ -86,8 +85,7 @@ class Users extends DatabaseCheck {
 	//up test for it in the query... But it makes getdata() easier
 	public function isnew() {
     	$db = $this->db;
-    	$q = $db->query($this->query);
-    	$this->result = $q->fetchAll();
+        $this->result = $db->query($this->query);
     	$this->new_users = array();
 		foreach ($this->result as $row){
 			$this->new_users[] = $row['name'];
@@ -157,9 +155,7 @@ $date = date('Y-m-d H:i:s');
 $time = time();
 $results = False;
 $time_wasted=0;
-$db = new PDO('sqlite:sqlitemain');
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-$db->exec("pragma synchronous = off;");
+$db = new myDatabase();
 if ($user !== 0){
 	if (@$db->exec("INSERT INTO users (name,connected,lastpoll)".
 		" VALUES ('{$user}',1,'{$time}')") == false){
