@@ -1,6 +1,6 @@
 <?php
 
-
+require_once('myDatabase.php');
 
 $text = $_POST['msg'];
 
@@ -19,21 +19,13 @@ $text = preg_replace('!>(https?://)?www.youtube.com/watch\?v=(.{11})<\/a>!i',
 }
 
 
-//mysqli_query($con,"INSERT INTO shoutbox ('user', 'msg') VALUES ('lololol','lelelelele')");
 date_default_timezone_set("Europe/Helsinki");
 $date = date('Y-m-d H:i:s');
 
-$db = new PDO('sqlite:sqlitemain');
-$db->exec("pragma synchronous = off;");
+$db = new myDatabase();
 $db->exec("INSERT INTO shoutbox (pvm,user, msg) VALUES ('" .
 			$date . "','" . addslashes($_POST['user']) . "','" . addslashes($text) . "')");
 $db = NULL;
-/* $db = new MyDB();
-$db->busyTimeout(1000);
-$db->exec("INSERT INTO shoutbox (pvm,user, msg) VALUES ('" .
-			$date . "','" . addslashes($_POST['user']) . "','" . addslashes($text) . "')");
-$db->close(); */
-
 
 function youtube_title($id) {
   $video_info = file_get_contents("http://youtube.com/get_video_info?video_id=".$id);

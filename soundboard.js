@@ -118,7 +118,7 @@ $("body").on("keypress",".edit_area",function(e){
 //Poista hymiö
 $('body').on("click",".deleteemo",function(){
 			if (confirm("Oletko varma, että haluat poistaa hymiön?")) {
-				var s = $(this).parent().prev().prev().html();
+				var s = $(this).next().html();
 				console.log(s);
 				$.ajax({
 					type: 'post',
@@ -340,17 +340,7 @@ $(document).ready(function(){
 	}, 1000);
 	
 	
-	//Hymiökuvakkeet
-	$.ajax({
-		data:{dothis:'getemoticons'},
-		url:'getshouts.php',
-		type:'GET',
-		success: function (data) {
-		if ($("<div />").append($("#emoticons").clone()).html() != data)
-		$('#emoticons').replaceWith(data);
-		}
-	});
-	
+
 	updateTJt();
 	longPoll();
 
@@ -524,7 +514,11 @@ function longPoll(){
                     $('#vitsit').html('<ul></ul>');
                     $.each(payload.vitsit, function (i, vitsi){
                         $('#vitsit ul').html($('#vitsit ul').html() + 
-                            '<li id="'+vitsi.rowid+'"><button style="padding:2px;min-width:40px;" class="deletevitsi">X</button>' + vitsi.vitsi + '</li>');
+                            '<li id="'+
+                            vitsi.rowid+
+                            '"><button style="padding:2px;min-width:40px;" class="deletevitsi">X</button>' + 
+                            vitsi.vitsi + 
+                            '</li>');
                     })
 
                 }
@@ -535,9 +529,14 @@ function longPoll(){
                     $('#emoticons').html('');
                     $.each(payload.emoticons, function (i, emo){
                         $('#emoticons').html($('#emoticons').html() + 
-                        '<img style="max-width:50px;max-height:50px"src="'+emo.linkki+'" alt="'+emo.sana+' class="emoticon""/>');
+                        '<img style="max-width:50px;max-height:50px"src="'+emo.linkki+'" alt="'+emo.sana+'" class="emoticon"/>');
 
-                        $('#emoticons_tab ul').html($('#emoticons_tab').html() + '<li>'+emo.linkki+'</li>');
+                        $('#emoticons_tab ul').html($('#emoticons_tab ul').html() + 
+                            '<li>'+
+                            '<button style="padding:2px;min-width:40px;" class="deleteemo">X</button>'+
+                            '<span>' + emo.sana + '</span> -- ' +
+                            '<img style="max-width:50px;max-height:50px"src="'+
+                            emo.linkki+'"/></li>');
                     })
                     
                 }
