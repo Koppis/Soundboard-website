@@ -499,16 +499,13 @@ function longPoll(){
 					//disable record button
 					$('#recordbutton').attr("disabled","disabled");
 					$('#recordbutton').removeClass("recordbutton");
-					//disable play recorded-button
-					$('.recorded').attr("disabled","disabled");
-					} else {
+					//disable play recorded-button					} else {
 					$('#recordbutton').css('color', 'black');
 					$('#recordbutton').text("Record");
 					//enable buttons
 					$('#recordbutton').removeAttr("disabled");
 					$('#recordbutton').addClass("recordbutton");
-					$('.recorded').removeAttr("disabled");
-					}
+                }
 					
 					
 					
