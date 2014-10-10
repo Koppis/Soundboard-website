@@ -19,6 +19,26 @@ class DatabaseCheck {
     }
 }
 
+class Emoticons extends Databasecheck {
+	public function __construct($db,$revision) {
+		$this->db = $db;
+		$this->query = "SELECT revision FROM changes WHERE name = 'emoticons' AND revision > $revision";
+    }
+
+    public function getdata () {
+        $data = array();
+        $result = $this->db->query('SELECT * FROM emoticons');
+        foreach ($result as $row) {
+            $data[] = array('sana'=>$row['sana'],'linkki'=>$row['linkki']);
+        }
+
+        $data[] = $this->result[0]['revision'];
+
+        return $data;
+    }
+
+}
+
 
 class Vitsit extends DatabaseCheck {
 	public function __construct($db,$revision) {
@@ -140,31 +160,43 @@ class Messages extends DatabaseCheck {
 	}
 }
 
-$lastRow = (isset($_GET['rowid']) && !empty($_GET['rowid'])) ? $_GET['rowid']:0;
-$kohta = (isset($_GET['kohta']) && !empty($_GET['kohta'])) ? $_GET['kohta'] : 0;
-$user = (isset($_GET['user']) && !empty($_GET['user'])) ? $_GET['user'] : 0;
-$rec = (isset($_GET['rec']) && !empty($_GET['rec'])) ? $_GET['rec'] : 0;
-$new_rec = $rec;
-$known_users = (isset($_GET['users']) && !empty($_GET['users'])) 
-	            ? JSON_decode($_GET['users']) : array();
-$online = (isset($_GET['online']) && !empty($_GET['online'])) ? $_GET['online'] : 0;
-$vitsit_revision = (isset($_GET['vitsit_revision']) && !empty($_GET['vitsit_revision'])) ? $_GET['vitsit_revision'] : 0;
 
 
-$date = date('Y-m-d H:i:s');
-$time = time();
-$results = False;
-$time_wasted=0;
-$db = new myDatabase();
-if ($user !== 0){
-	if (@$db->exec("INSERT INTO users (name,connected,lastpoll)".
-		" VALUES ('{$user}',1,'{$time}')") == false){
-		$db->exec("UPDATE users SET connected=1, lastpoll={$time}".
-			" WHERE name='{$user}'");
-	}
+
+    $lastRow = (isset($_GET['rowid']) && !empty($_GET['rowid'])) ? $_GET['rowid']:0;
+    $kohta = (isset($_GET['kohta']) && !empty($_GET['kohta'])) ? $_GET['kohta'] : 0;
+    $user = (isset($_GET['user']) && !empty($_GET['user'])) ? $_GET['user'] : 0;
+    $rec = (isset($_GET['rec']) && !empty($_GET['rec'])) ? $_GET['rec'] : 0;
+    $new_rec = $rec;
+    $known_users = (isset($_GET['users']) && !empty($_GET['users'])) 
+                    ? JSON_decode($_GET['users']) : array();
+    $online = (isset($_GET['online']) && !empty($_GET['online'])) ? $_GET['online'] : 0;
+    $vitsit_revision = (isset($_GET['vitsit_revision']) && !empty($_GET['vitsit_revision'])) ? $_GET['vitsit_revision'] : 0;    
+    $emoticons_revision = (isset($_GET['emoticons_revision']) && !empty($_get['emoticons_revision'])) ? $_get['emoticons_revision'] : 0;
+
+
+
+    $date = date('Y-m-d H:i:s');
+    $time = time();
+    $results = False;
+    $time_wasted=0;
+
+if (!debug_backtrace()) {
+    $db = new myDatabase('sqlitemain');
+} else {
+    $db = new myDatabase();
+    if ($user !== 0){
+        if (@$db->exec("INSERT INTO users (name,connected,lastpoll)".
+            " VALUES ('{$user}',1,'{$time}')") == false){
+            $db->exec("UPDATE users SET connected=1, lastpoll={$time}".
+                " WHERE name='{$user}'");
+        }
+    }
+
 }
 
 $checks = array();
+$checks['emoticons'] = new Emoticons($db,$emoticons_revision);
 $checks['vitsit'] = new Vitsit($db,$vitsit_revision);
 $checks['online'] = new JukeboxOnline($db,$online);
 $checks['rec'] = new Record($db,$rec);

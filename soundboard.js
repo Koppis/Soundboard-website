@@ -121,8 +121,7 @@ $('body').on("click",".deleteemo",function(){
 				$.ajax({
 					type: 'post',
 					url: 'emoticonssc.php',
-					data: {dothis:1,sana:s},
-					success: updateEmoticons
+					data: {dothis:1,sana:s}
 				});
           	}
         });
@@ -248,11 +247,7 @@ $(document).ready(function(){
           $.ajax({
             type: 'post',
             url: 'emoticonssc.php',
-            data: {dothis:2,sana:s,linkki:l},
-            success: function (data) {
-            	updateEmoticons()
-				console.log(data);
-            }
+            data: {dothis:0,sana:s,linkki:l}
           });
 
         });
@@ -564,21 +559,6 @@ function sendcolor(){
 	});
 }
 
-function updateEmoticons(){
-	$.ajax({
-		data:{dothis:0},
-		type:'POST',
-		url:'emoticonssc.php',
-		always: function (data){
-			console.log(data);
-		},
-		success: function (data){
-			if (data.length > 0){
-			$('#emoticons_tab').html(data);
-			}
-		}
-	});
-}
 function updateTJt(){
 	$.ajax({
 			data:{rowcount:$('#tjt > ul > li').length},

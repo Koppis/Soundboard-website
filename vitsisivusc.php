@@ -1,14 +1,20 @@
 <?php
+
+if (!isset($_SERVER["HTTP_HOST"])) {
+    //for dem debugs
+  parse_str($argv[1], $_GET);
+  parse_str($argv[1], $_POST);
+}
+
 if (key_exists('dothis',$_POST))
 	$choice = $_POST['dothis'];
 else{
 	die("You didn't specify a dothis");
 }
 
-$db = new PDO('sqlite:sqlitemain');
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-$db->exec("pragma synchronous = off;");
+require_once('myDatabase.php');
 
+$db = new myDatabase();
 
 
 switch ($_POST['dothis']){
@@ -20,20 +26,17 @@ case 0: // Add a joke
 
 break;
 
-case 1: // Remove a vitsi
+case 1: // Remove a joke
 
     $db->exec(sprintf("DELETE FROM vitsit WHERE rowid=%s",$_POST['id']));
     $db->exec("UPDATE changes SET revision = revision + 1 WHERE name = 'vitsit'");
+
 break;
 
-case 2: //Edit a vitsi
+case 2: //Edit a joke
 
-$id = $_POST['id'];
-$new = $_POST['new'];
-	
-$db->exec(sprintf("UPDATE vitsit SET vitsi='%s' WHERE rowid=%s",$new,$id));
-$db->exec("UPDATE changes SET revision = revision + 1 WHERE name = 'vitsit'");
-
+    $db->exec(sprintf("UPDATE vitsit SET vitsi='%s' WHERE rowid=%s",$_POST['new'],$_POST['id']));
+    $db->exec("UPDATE changes SET revision = revision + 1 WHERE name = 'vitsit'");
 
 break;
 }
