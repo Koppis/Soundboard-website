@@ -8,7 +8,7 @@ $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 socket_set_option($socket,SOL_SOCKET,SO_RCVTIMEO,array("sec"=>35,"usec"=>0));
 socket_bind($socket, '0.0.0.0', 1337);
 
-$db = new PDO('sqlite:sqlitemain');
+$db = new PDO('sqlite:/var/www/db/sqlitemain');
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 $db->exec("pragma synchronous = off;");
 
@@ -47,8 +47,10 @@ while (true) {
     
     if ($buf == "rs") {
     	$db->exec("UPDATE record SET status=1");
+        
     } elseif ($buf == "rd") {
     	$db->exec("UPDATE record SET status=0");
+    	$db->exec("INSERT INTO recordings VALUES (1)");
     }
 
 }

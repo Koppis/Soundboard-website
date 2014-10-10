@@ -37,6 +37,8 @@
 					<br>
 					<div id="processes"></div>
 					<div id="tjt"></div>
+                    <div id="recordings"></div>
+                    <button id="deleterecording">Delete Recording</button>
 			</td>
 			<td colspan="1" width="85%" valign="top">
 				<div id="tabs">

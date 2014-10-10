@@ -7,6 +7,7 @@ var online = 0;
 var t;
 var vitsit_revision = -1;
 var emoticons_revision = -1;
+var recordings = 0;
 
 document.title = "Koppislandia";
 focusvar = 1;
@@ -442,7 +443,8 @@ function longPoll(){
         rec:recording,
         online:online,
         vitsit_revision:vitsit_revision,
-        emoticons_revision:emoticons_revision},
+        emoticons_revision:emoticons_revision,
+        recordings:recordings},
 		type:'GET',
 		url: 'shoutstream.php',
 		dataType:'json',
@@ -487,7 +489,8 @@ function longPoll(){
 					//disable record button
 					$('#recordbutton').attr("disabled","disabled");
 					$('#recordbutton').removeClass("recordbutton");
-					//disable play recorded-button					} else {
+					//disable play recorded-button					
+                    } else {
 					$('#recordbutton').css('color', 'black');
 					$('#recordbutton').text("Record");
 					//enable buttons
@@ -540,6 +543,14 @@ function longPoll(){
                     })
                     
                 }
+				if (payload.recordings != null){
+                    console.log(payload.recordings);
+					recordings = payload.recordings[payload.recordings.length - 1];
+                    $.each(payload.recordings, function(i, rec) {
+                        $('#recordings').html($('#recordings').html() 
+                            + '<button class="sbutton" id="sounds\\recorded\\' + (rec) + '.wav" value="sounds\\recorded\\' + (rec) + '.wav">' + (rec) + '</button>');
+                    })
+				}
 
 			}
 		t = setTimeout(longPoll,100);
@@ -607,6 +618,7 @@ function deleteVitsi(id){
 }
 
 function disablejukebox(){
+
 	$('#recordbutton').css('color', 'black');
 	$('#recordbutton').text("Record");
 	$('#recordbutton').attr("disabled","disabled");
@@ -619,8 +631,10 @@ function disablejukebox(){
 	$('#not_online').show()
 }
 function enablejukebox(){
+    if (!recording) {
 	$('#recordbutton').removeAttr("disabled");
 	$('#recordbutton').addClass("recordbutton");
+    }
 	$('.sbutton').removeAttr("disabled");
 	$('.youtube').removeAttr("disabled");
 	$('.toista').removeAttr("disabled");

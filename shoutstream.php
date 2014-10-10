@@ -19,6 +19,22 @@ class DatabaseCheck {
     }
 }
 
+class Recordings extends Databasecheck {
+	public function __construct($db,$revision) {
+		$this->db = $db;
+		$this->query = "SELECT rowid FROM recordings WHERE rowid > " .  $revision;
+    }
+
+    public function getdata () {
+        $data = array();
+        foreach ($this->result as $row) {
+            $data[] = $row['rowid'];
+        }
+        return $data;
+    }
+
+}
+
 class Emoticons extends Databasecheck {
 	public function __construct($db,$revision) {
 		$this->db = $db;
@@ -163,6 +179,7 @@ class Messages extends DatabaseCheck {
 
 
 
+$recordings = (isset($_GET['recordings']) && !empty($_GET['recordings'])) ? $_GET['recordings']:0;
 $lastRow = (isset($_GET['rowid']) && !empty($_GET['rowid'])) ? $_GET['rowid']:0;
 $kohta = (isset($_GET['kohta']) && !empty($_GET['kohta'])) ? $_GET['kohta'] : 0;
 $user = (isset($_GET['user']) && !empty($_GET['user'])) ? $_GET['user'] : 0;
@@ -193,6 +210,7 @@ if ($user !== 0){
 
 
 $checks = array();
+$checks['recordings'] = new Recordings($db,$recordings);
 $checks['emoticons'] = new Emoticons($db,$emoticons_revision);
 $checks['vitsit'] = new Vitsit($db,$vitsit_revision);
 $checks['online'] = new JukeboxOnline($db,$online);

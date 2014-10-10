@@ -34,7 +34,10 @@ class myDatabase {
             initDB($this->db);
             $ret = $this->db->query($str);
         }
-        return $ret->fetchAll();
+        if ($ret === FALSE)
+            return array();
+        else
+            return $ret->fetchAll();
     }
 
     public /* int */ function exec(/* string */ $str = '') {
