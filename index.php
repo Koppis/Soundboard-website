@@ -8,8 +8,8 @@
 	<!--<link rel="stylesheet" media="(min-width: 800px)" type="text/css" href="index_tablet.css">-->
 	<link rel="stylesheet" media="(min-device-width: 800px)" type="text/css" href="index.css">
 
-	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-	<script src="jquery-ui/jquery-ui.js"></script>
+	<script src="jquery-1.11.1.min.js"></script>
+	<script src="jquery-ui/jquery-ui.min.js"></script>
 	<script src="jquery.cookie.js"></script>
 	<script type="text/javascript" src="soundboard.js"></script>
 	<script type="text/javascript" src="jscolor/jscolor.js"></script>
@@ -37,20 +37,19 @@
 					<br>
 					<div id="processes"></div>
 					<div id="tjt"></div>
-                    <br><button id="recordbutton" class="recordbutton">Record</button>
-                    <br />
-                    <button id="deleterecording">Delete Recording</button>
-                    <button id="renamerecording">Rename Recording</button>
-                    <p><div id="recordings"></div></P>
+                    <button style="padding:2px;min-width:20px;" id="hideyoutube">-</button>
+                    <div id="youtube"></div>
+
 			</td>
 			<td colspan="1" width="85%" valign="top">
 				<div id="tabs">
 					<ul>
 						<li><a href="#frag-1">Chat</a></li>
 						<li><a href="#frag-2">Soundboard</a></li>
-						<li><a href="#frag-3">Vitsit</a></li>
-						<li><a href="#frag-4">Emoticons</a></li>
-						<li><a href="#frag-5">todo</a></li>
+						<li><a href="#frag-3">Recordings</a></li>
+						<li><a href="#frag-4">Vitsit</a></li>
+						<li><a href="#frag-5">Emoticons</a></li>
+						<li><a href="#frag-6">todo</a></li>
 					</ul>
 					<div id="frag-1">
 						<input type="text" style="width:10em" class="textarea" id="username" 
@@ -63,6 +62,7 @@
 						<button id="sendmsg">Send</button>
 						<select id="kieli">
 							<option value="fi">Suomi</option>
+							<option value="sv">Ruotsi</option>
 							<option value="en-us">Englanti US</option>
 							<option value="en-uk">Englanti UK</option>
 							<option value="de">Saksa</option>
@@ -96,8 +96,6 @@
 							position: relative;
 						">Jukebox ei ole käynnissä Eeron koneella :(</span><p></p></div>
 <div id="sounds_rowcount" value="285"></div>
-<br><button id="recordbutton" class="recordbutton">Record</button>
-<button class="sbutton recorded" id="sounds\recorded.wav" value="sounds\recorded.wav">Play recorded</button>
 			<br><button style="padding:2px;min-width:20px;" class="hidecat">-</button><div style="display:inline" class="cat" id="Music">Music<br>
 			<button class="sbutton" id="sounds\Music\Alcohol is Free.mp3" value="sounds\Music\Alcohol is Free.mp3">Alcohol is Free</button>
 			<button class="sbutton" id="sounds\Music\Assburger.mp3" value="sounds\Music\Assburger.mp3">Assburger</button>
@@ -388,7 +386,14 @@
 			<button class="sbutton" id="sounds\yousuck.wav" value="sounds\yousuck.wav">yousuck</button></div>
 					</div>
 					</div>
-					<div id="frag-3">
+                    <div id="frag-3">
+                    <br><button id="recordbutton" class="recordbutton">Record</button>
+                    <button id="newrcategory">New category</button>
+                    <br />
+                    <!--<button id="deleterecording">Delete Recording</button>-->
+                    <p><div id="recordings"></div></P>
+					</div>
+					<div id="frag-4">
 						<input style="width:30em" type="text" class="textarea" 
 						id="addjoke" alt="Lisää vitsi" value="Lisää vitsi" />
 						<button id="kerrovitsi">Kerro vitsi</button>
@@ -396,7 +401,7 @@
 
 						</div>
 					</div>
-					<div id="frag-4">
+					<div id="frag-5">
 						<input id="addemoticon_sana" type="text" style="width:10em" class="textarea" name="sana"
 						alt="Sana" value="Sana">
 						<input id="addemoticon_linkki" type="text" style="width:20em" class="textarea" name="linkki"
@@ -407,7 +412,7 @@
 						</div>
 					</div>
 					
-					<div id="frag-5">
+					<div id="frag-6">
 						<h2>Todo</h2>
 						<ul>
 							<li style="text-decoration:line-through">Emoticon sivusta yhtä hyvä kun vitsit</li>

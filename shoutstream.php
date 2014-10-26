@@ -19,6 +19,32 @@ class DatabaseCheck {
     }
 }
 
+class Cookie extends Databasecheck {
+	public function __construct($db,$rowid,$id) {
+		$this->db = $db;
+		$this->query = "SELECT *, rowid FROM cookiedata WHERE identifier = '".$id."' AND $rowid = -1";
+    }
+
+    public function getdata () {
+        if (isset($this->result))
+            return $this->result[0];
+    }
+
+}
+
+class Youtube extends Databasecheck {
+	public function __construct($db,$rowid) {
+		$this->db = $db;
+		$this->query = "SELECT *,rowid FROM youtube WHERE rowid > $rowid ORDER BY rowid DESC LIMIT 1";
+    }
+
+    public function getdata () {
+        if (isset($this->result))
+            return $this->result[0];
+    }
+
+}
+
 class Recordings extends Databasecheck {
 	public function __construct($db,$revision) {
 		$this->db = $db;
@@ -27,9 +53,10 @@ class Recordings extends Databasecheck {
 
     public function getdata () {
         $data = array();
-        $result = $this->db->query('SELECT *, rowid FROM recordings');
+        $result = $this->db->query('SELECT *, rowid FROM recordings WHERE deleted IS NOT 1 ORDER BY rowid DESC');
         foreach ($result as $row) {
-            $data[] = array('rowid' => $row['rowid'], 'name' => $row['name']);
+            $data[] = array('rowid' => $row['rowid'], 'name' => $row['name'], 'playcount' => $row['playcount'],
+                         'category' => $row['category']);
         }
         
         $data[] = $this->result[0]['revision'];
@@ -193,6 +220,9 @@ $online = (isset($_GET['online']) && !empty($_GET['online'])) ? $_GET['online'] 
 $vitsit_revision = (isset($_GET['vitsit_revision']) && !empty($_GET['vitsit_revision'])) ? $_GET['vitsit_revision'] : 0;    
 $emoticons_revision = (isset($_GET['emoticons_revision']) && !empty($_GET['emoticons_revision'])) ? $_GET['emoticons_revision'] : 0;
 $recordings = (isset($_GET['recordings_revision']) && !empty($_GET['recordings_revision'])) ? $_GET['recordings_revision']:0;
+$youtube_rowid = (isset($_GET['youtube_rowid']) && !empty($_GET['youtube_rowid'])) ? $_GET['youtube_rowid']:0;
+$cookie_rowid = (isset($_GET['cookie_rowid']) && !empty($_GET['cookie_rowid'])) ? $_GET['cookie_rowid']:0;
+$session_id = (isset($_GET['session_id']) && !empty($_GET['session_id'])) ? $_GET['session_id']:0;
 
 
 
@@ -213,6 +243,8 @@ if ($user !== 0){
 
 
 $checks = array();
+$checks['cookie'] = new Cookie($db,$cookie_rowid,$session_id);
+$checks['youtube'] = new Youtube($db,$youtube_rowid);
 $checks['recordings'] = new Recordings($db,$recordings);
 $checks['emoticons'] = new Emoticons($db,$emoticons_revision);
 $checks['vitsit'] = new Vitsit($db,$vitsit_revision);

@@ -40,7 +40,7 @@ $kieli = 'fi';
 
 if ($vitsi == "**random**"){
      
-    $db = new PDO('sqlite:sqlitemain');
+    $db = new PDO('sqlite:/var/www/db/sqlitemain');
     $db->exec("pragma synchronous = off;");
     
     $r = $db->query(

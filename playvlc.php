@@ -1,4 +1,7 @@
 <?php
+
+require_once('myDatabase.php');
+
 putenv('LANG=en_US.UTF-8'); 
 function utf8_urldecode($str) {
 	$str = preg_replace("/%u([0-9a-f]{3,4})/i","&#x\\1;",urldecode($str));
@@ -6,6 +9,7 @@ function utf8_urldecode($str) {
 }
 
 #$_POST['path'] = utf8_decode($_POST['path']);
+$db = new myDatabase();
 
 
 $file_parts = pathinfo($_POST['path']);
@@ -14,7 +18,13 @@ echo $_POST['path'];
 
 $msg = $_POST['path'];
 
-if (isset($_POST['yt']) && !empty($_POST['yt']) && $_POST['yt'] == 1) {
+
+if (substr($msg,7,8) == "recorded") {
+    $ar1 = explode('\\',$msg);
+    $ar2 = explode('.',$ar1[2]);
+    $rowid = $ar2[0];
+    $db->exec("UPDATE recordings SET playcount = playcount + 1 WHERE rowid = $rowid");
+} else if (isset($_POST['yt']) && !empty($_POST['yt']) && $_POST['yt'] == 1) {
 	preg_match('!(https?://)?www.youtube.com/watch\?v=(.{11})!i', $msg, $matches);
 	echo $matches[2];
 	if ($matches){
@@ -22,11 +32,12 @@ if (isset($_POST['yt']) && !empty($_POST['yt']) && $_POST['yt'] == 1) {
 	} else {
 	$vidtitle = $msg;
 	}
-	$db = new PDO('sqlite:sqlitemain');
-	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-	$db->exec("pragma synchronous = off;");
+    if ($vidtitle == '') $vidtitle = $msg;
 	$db->exec("INSERT INTO youtube (link,name) VALUES ('{$msg}','{$vidtitle}')");
 	$db = NULL;
+    
+    $msg .= '&hd=1';
+    
 }
 
 $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);

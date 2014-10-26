@@ -8,8 +8,10 @@ var t;
 var vitsit_revision = -1;
 var emoticons_revision = -1;
 var recordings_revision = -1;
-var deletingrecording = false;
-var renamingrecording = false;
+var youtube_rowid = 0;
+var cookie_rowid = -1;
+var session = "";
+var rec_playcounts;
 
 document.title = "Koppislandia";
 focusvar = 1;
@@ -36,33 +38,150 @@ if ((/iPhone|iPod|iPad|Android|BlackBerry/).test(navigator.userAgent)) {
     });
 }) 
 
+//click new rcategory
+$('body').on("click","#newrcategory",function(){
+    category = prompt("Anna uuden kategorian nimi");
+    newdiv = $('<div>' + category + '<p></div>')
+    newdiv.attr('class','rcategory');
+    newdiv.attr('value', category);
+    newdiv.css('min-height',77);
+    newdiv.css('min-width',100);
+    newdiv.css('max-width','40%');
+    newdiv.css('border','2px solid');
+    newdiv.css('margin','10px');
+    newdiv.css('padding','5px');
+    newdiv.css('float','left');
+    newdiv.droppable({accept: ".recording",activeClass: "ui-state-highlight",
+        drop: function( event, ui ) {
+            $(this).append(ui.draggable)
+            console.log(ui.draggable.attr('title'))
+            console.log($(this).attr('value'))
+            
+            $.ajax({
+                type: 'POST',
+                url: 'moverecording.php',
+                data: {rowid:ui.draggable.attr('title'),newcat:$(this).attr('value')}
+            });
+        }})
+    $('#recordings').prepend(newdiv);
+	});
 
+//click youtubehide
+$('body').on("click","#hideyoutube",function(){
+        if($("#youtube").length == 1)
+            $('#youtube').remove();
+        else {
+            $(this).after('<div id="youtube"></div>')
+            youtube_rowid = 0;
+            longPoll(true);
+        }
+	});
+
+
+
+
+
+//right click on recording
+$('body').on("contextmenu",".recording",function(){
+    if ($("#modifyrecording").length == 0) {
+    
+        oldwidth = $(this).width();
+        
+        $(this).after('<div id="modbox"><input id="modifyrecording" title="' + $(this).html() + '" value="' + $(this).html() + '"/>' +
+        '<button id="deleterecording" style="padding:2px;min-width:20px;z-index:10;' +
+        'position: relative;left: 10px;top: -8px;margin-left: -2px;margin-top : 10px;">x</button></div>');
+        
+        /*
+        $(this).html('<input id="modifyrecording" title="' + $(this).html() + '" value="' + $(this).html() + '"/>' +
+        '<button id="deleterecording" style="padding:2px;min-width:20px;z-index:10;' +
+        'position: relative;left: 10px;top: -8px;margin-left: -2px;margin-top : 10px;">x</button>');
+        
+        $(this).css('margin-right', oldwidth - $(this).width());
+        $(this).css('margin-top', '-16');
+        $(this).css('margin-bottom', '-10');
+        */
+        
+        $("#modbox").css('position', 'absolute');
+        $("#modbox").css('top', $(this).position()['top']);
+        $("#modbox").css('left', $(this).position()['left']);
+        $("#modbox").css("z-index","10");
+        
+		$("#modifyrecording").focus();
+        $("#modifyrecording").select();
+        $(this).attr("disabled","disabled");
+        $(this).css("position","relative");
+        $(this).css("z-index","1");
+    }
+    
+    return false;
+});
+
+//recordingmuokkausalue
+$("body").on("blur","#modifyrecording",function(){
+    if ($(this).val() !== $(this).attr('title')) {
+        $.ajax({
+            type: 'POST',
+            url: 'renamerecording.php',
+            data: {rowid:$(this).parent().prev().attr('title'),newname:$(this).val()}
+        });
+    }
+    setTimeout($.proxy(function() {
+        $(this).parent().prev().html($(this).val());
+        $(this).parent().prev().removeAttr("disabled");
+        /*
+        $(this).parent().css('margin-right', '0');
+        $(this).parent().css('margin-top', '0');
+        $(this).parent().css('margin-bottom', '0');
+        $(this).parent().css('z-index', '0');
+        //$(this).parent().replaceWith('<button class="sbutton recording">' + $(this).val() + '</button>');
+        */
+        $('#modbox').remove();
+    }, this),500);
+	//$("#modifyrecording").replaceWith($(this).val());
+    
+    
+	
+});
+//recordingmuokkausalueen napinpainallus
+$("body").on("keypress","#modifyrecording",function(e){
+		if (e.keyCode == 13){
+            if ($(this).val() !== $(this).attr('title')) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'renamerecording.php',
+                    data: {rowid:$(this).parent().prev().attr('title'),newname:$(this).val()}
+                });
+            }
+            $(this).parent().prev().removeAttr("disabled");
+            $(this).parent().prev().html($(this).val());
+            $('#modbox').remove();
+            //("#modifyrecording").replaceWith($(this).val());
+		}
+	});
+
+
+    
 //poista reconrding
-$('body').on("click",".recording",function(){
-		if (deletingrecording && confirm("Oletko varma, että haluat poistaa aanityksen?")) {
-            deletingrecording = false;
-			$.ajax({
+$('body').on("click","#deleterecording",function(){
+		//if (confirm("Oletko varma, että haluat poistaa aanityksen?")) {
+            $.ajax({
 				type: 'POST',
 				url: 'deleterecording.php',
-				data: {rowid:$(this).attr('title')}
-			  });
-        } else if (renamingrecording) { //rename
-            newname = prompt("Anna uusi nimi",$(this).html());
-            renamingrecording = false;
-            if (newname != null) {
-			$.ajax({
-				type: 'POST',
-				url: 'renamerecording.php',
-				data: {rowid:$(this).attr('title'),newname:newname}
-			  });
-              }
-        } 
+				data: {rowid:$(this).parent().prev().attr('title')}
+			});
+        //}
 
 	});
 
 //Toista ääni
 $('body').on("click",".sbutton",function(){
 		if (!$(this).is(":disabled")) {
+            
+            if ($(this).parent('div#recordings').length) {
+                rec_playcounts[$(this).index()] += 1;
+                updateplaycounts();
+            }
+            
 			$.ajax({
 				type: 'POST',
 				url: 'playvlc.php',
@@ -197,9 +316,18 @@ function addslashes(string) {
 //DOCUMENT READY ALKAA
 $(document).ready(function(){
 	disablejukebox();
+    
 
 	//Alustaa välilehdet
-	$( "#tabs" ).tabs();
+	$( "#tabs" ).tabs({activate: function( event, ui ){
+        console.log(ui.newTab.index());
+        if (ui.newTab.index() === 2) {
+            recordings_revision = -1;
+            longPoll(true);
+        }
+    }});
+    
+    
 
 	//Klikataan stop-nappia
 	$('.stop').click(function(){
@@ -232,7 +360,6 @@ $(document).ready(function(){
         if (e.keyCode == 13) {
         	var v = $(this).val();
         	v = v.replace("https","http");
-			v += "&hd=1";
 			console.log(v);
         	var $path = {yt:1, path:v};
         	$(this).val("");
@@ -296,6 +423,9 @@ $(document).ready(function(){
     });
     //Kekseistä haetaan nimi, väri ja viestihistoria
     $.cookie.json = true;
+    
+ 
+    
 	if ($.cookie("shoutname") != undefined)
 		$('#username').val($.cookie("shoutname"));
     
@@ -304,7 +434,12 @@ $(document).ready(function(){
 	if ($.cookie("usercolor") != undefined)
     	$('#usercolor').val($.cookie("usercolor"));
     	
-
+    if ($.cookie("session") != undefined)
+		session = $.cookie("session");
+    else {
+        session = $.now().toString() + $('#username').val();
+        $.cookie("session", session, { expires : 10 });
+        }
     
     ma = [];
     if ($.cookie("sentmessages") != undefined)
@@ -319,8 +454,8 @@ $(document).ready(function(){
     	data:{kieli:'fi',vitsi:'**random**',badumtss:1},
     	url:'tts.php',
     	type:'POST',
-    	success: function(){
-    		updateVitsit();
+    	success: function(data){
+    		console.log(data);
     	}});
     
     
@@ -353,14 +488,7 @@ $(document).ready(function(){
 
     });
     
-    //Kun painaa delete recordings
-    $("#deleterecording").click(function(){
-        deletingrecording = true;
-    });
-    //Kun painaa rename recordings
-    $("#renamerecording").click(function(){
-        renamingrecording = true;
-    });
+
     
     
 
@@ -458,14 +586,13 @@ function postmessage(usr,msg,kieli,tts){
 			msg:msg}
 	});
 	if (mobile){
-		clearTimeout(t);
-		longPoll();
+		longPoll(true);
 	}
 }
 
 
-function longPoll(){
-    console.log("starting stream! lastrow = "+$("#shoutbox table tbody tr:first-child").attr("id"));
+function longPoll(loop){
+    console.log("starting stream! session = "+session);
 	known_users = [];
 	
 	$("#users span").each(function() { known_users.push($(this).text()) });
@@ -480,7 +607,10 @@ function longPoll(){
         online:online,
         vitsit_revision:vitsit_revision,
         emoticons_revision:emoticons_revision,
-        recordings_revision:recordings_revision},
+        recordings_revision:recordings_revision,
+        youtube_rowid:youtube_rowid,
+        cookie_rowid:cookie_rowid,
+        session_id:session},
 		type:'GET',
 		url: 'shoutstream.php',
 		dataType:'json',
@@ -520,34 +650,22 @@ function longPoll(){
 				if (payload.rec != null){
 					recording = payload.rec;
 					if (recording == 1) {
-					$('#recordbutton').css('color', 'red');
-					$('#recordbutton').text("*Recording*");
-					//disable record button
-					$('#recordbutton').attr("disabled","disabled");
-					$('#recordbutton').removeClass("recordbutton");
-					//disable play recorded-button					
+                        $('#recordbutton').css('color', 'red');
+                        $('#recordbutton').text("*Recording*");
+                        //disable record button
+                        $('#recordbutton').attr("disabled","disabled");
+                        $('#recordbutton').removeClass("recordbutton");
+                        //disable play recorded-button					
                     } else {
-					$('#recordbutton').css('color', 'black');
-					$('#recordbutton').text("Record");
-					//enable buttons
-					$('#recordbutton').removeAttr("disabled");
-					$('#recordbutton').addClass("recordbutton");
-                }
-					
-					
-					
+                        $('#recordbutton').css('color', 'black');
+                        $('#recordbutton').text("Record");
+                        //enable buttons
+                        $('#recordbutton').removeAttr("disabled");
+                        $('#recordbutton').addClass("recordbutton");
+                    }
 					console.log("recording: " + recording);
 				}
-				if (payload.online != null){
-					online = payload.online;
-					if (online == 1) {
-						enablejukebox();
-					}
-					if (online == 0) {
-						disablejukebox();
-						
-					}
-				}
+
                 if (payload.vitsit != null) {
                     vitsit_revision = payload.vitsit.pop();
                     $('#vitsit').html('<ul></ul>');
@@ -583,29 +701,176 @@ function longPoll(){
                     console.log(payload.recordings);
 					recordings_revision = payload.recordings.pop();
                     $('#recordings').html('');
+                    
+                    for (i=0; i<0; i++) {
+                        newdiv = $('<div>eero<p></div>')
+                        newdiv.attr('class','rcategory');
+                        newdiv.attr('value','eero');
+                        newdiv.css('min-height',77);
+                        newdiv.css('min-width',100);
+                        newdiv.css('max-width','40%');
+                        newdiv.css('border','2px solid');
+                        newdiv.css('margin','10px');
+                        newdiv.css('padding','5px');
+                        newdiv.css('float','left');
+                        newdiv.droppable({accept: ".recording",activeClass: "ui-state-highlight",
+                                        drop: function( event, ui ) {
+                                            $(this).append(ui.draggable)
+                                            //$(this).css('height',$(this).height() + 39 )
+                                        }})
+                        
+                        $('#recordings').append(newdiv);
+                    }
+                    $('#recordings').append('<br style="clear:both" />');
+                    
+                    biggest = 0;
+                    rec_playcounts = [];
+                    $.each(payload.recordings, function(i, rec) {
+                        rec_playcounts[parseInt(rec.rowid)] = (parseInt(rec.playcount));
+                        if (rec.playcount > biggest)
+                            biggest = rec.playcount;
+                    })
+                    console.log("biggest: " + biggest);
                     $.each(payload.recordings, function(i, rec) {
                         name = rec.name
-                        if (rec.name == '1')
-                            name = rec.rowid
-                        $('#recordings').html('<button class="sbutton recording" title="'+rec.rowid+
-                        '" id="sounds\\recorded\\' + (rec.rowid) + '.wav" value="sounds\\recorded\\' +
-                        (rec.rowid) + '.wav">' + (name) + '</button>' +
-                        $('#recordings').html());
+                        if (rec.name == null || rec.name == '1')
+                            name = rec.rowid;
+                        
+                        
+                        newbutton = $('<button' +
+                        ' class="sbutton recording" title="'+rec.rowid+
+                        '" value="sounds\\recorded\\' + (rec.rowid) + '.wav">' + (name) + '</button>');
+                        
+                        if (rec.category != null && rec.category != "null") {
+                            if ($('.rcategory[value="' + rec.category + '"]').length == 0) {
+                                newdiv = $('<div>' + rec.category + '<p></div>')
+                                newdiv.attr('class','rcategory');
+                                newdiv.attr('value', rec.category);
+                                newdiv.css('min-height',77);
+                                newdiv.css('min-width',100);
+                                newdiv.css('max-width','40%');
+                                newdiv.css('border','2px solid');
+                                newdiv.css('margin','10px');
+                                newdiv.css('padding','5px');
+                                newdiv.css('float','left');
+                                newdiv.droppable({accept: ".recording",activeClass: "ui-state-highlight",
+                                        drop: function( event, ui ) {
+                                            $(this).append(ui.draggable)
+                                            
+                                            $.ajax({
+                                                type: 'POST',
+                                                url: 'moverecording.php',
+                                                data: {rowid:ui.draggable.attr('title'),newcat:$(this).attr('value')}
+                                            });
+                                        }})
+                                $('#recordings').prepend(newdiv);
+                            }
+                            $('.rcategory[value="' + rec.category + '"]').append(newbutton);
+                        } else {
+                            $('#recordings').append(newbutton);
+                        }
+                        
                     })
-				}
+                    
+                    updateplaycounts();
+                    
+                    
+                    $(".recording").draggable({cancel: "none",stack:'.recording',helper: "clone",
+                        scroll : false,
+                        "revert": function(a) {
 
+                            if (a == false) {
+                                $.ajax({
+                                    type: 'POST',
+                                    url: 'moverecording.php',
+                                    data: {rowid:$(this).attr('title'),newcat:'null'}
+                                });
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }});
+				}
+                if (payload.youtube != null){
+                    id = "";
+                    arr = payload.youtube.link.match("(?:[\?&]v=|be\/)([^&#]*)")
+                    if (arr.length > 1)
+                        id = arr[1];
+                    
+                    rand = Math.random();
+                    
+                    $('#youtube').html('');
+                    $('#youtube').html('<a href="' + payload.youtube.link + '">' +
+                    payload.youtube.name + '</a>' +
+                    '<iframe id="'+rand+'" type="text/html" width="100%"'+
+                    ' src="http://www.youtube.com/embed/'+id+'?enablejsapi=1&autohide=1&showinfo=0" frameborder="0"/>'
+                    );      
+                    if (youtube_rowid !== 0) {
+                        console.log(youtube_rowid);
+                        callPlayer(rand, function() {
+                            // This function runs once the player is ready ("onYouTubePlayerReady")
+                            callPlayer(rand, "playVideo");
+                            callPlayer(rand, "mute");
+                        });
+                    }
+                        
+                        
+                    youtube_rowid = payload.youtube.rowid;
+
+				}
+                
+                if (payload.cookie != null){
+                    cookie_rowid = payload.cookie.rowid;
+                }
+				if (payload.online != null){
+					online = payload.online;
+
+				}
+                if (online == 1) {
+                    enablejukebox();
+                }
+                if (online == 0) {
+                    disablejukebox();
+                }
 			}
-		t = setTimeout(longPoll,100);
+        
+        if (loop == undefined)
+            t = setTimeout(longPoll,100);
 		}
 		},
 		error: function(e){
 			errorText = e.responseText;
 		console.log('longpoll error!' + $(errorText).text());
-		t = setTimeout(longPoll,10000);
+        if (loop == undefined)
+            t = setTimeout(longPoll,10000);
 		}
 	
 	});
 }
+
+
+
+function updateplaycounts() {
+    biggest = 0
+    for (i=0; i<rec_playcounts.length; i++) {
+        if (rec_playcounts[i] == undefined) continue;
+        if (rec_playcounts[i] > biggest)
+            biggest = rec_playcounts[i]
+    }
+    
+    for (i=0; i<rec_playcounts.length; i++) {
+        if (rec_playcounts[i] == undefined) continue;
+        other_colors = (Math.floor(255 - (255 * (rec_playcounts[i] / biggest)))).toString(16);
+        
+        if (other_colors.length == 1)
+            other_colors = "0" + other_colors;
+
+        color = "#" + other_colors + "FF" + other_colors;
+        $(".recording[title='" + i + "']").css('background-color',color);
+    }
+}
+
+
 
 function updatecolor(){
 	console.log(username);
@@ -673,7 +938,7 @@ function disablejukebox(){
 	$('#not_online').show()
 }
 function enablejukebox(){
-    if (!recording) {
+    if (recording != 1) {
 	$('#recordbutton').removeAttr("disabled");
 	$('#recordbutton').addClass("recordbutton");
     }
@@ -683,4 +948,96 @@ function enablejukebox(){
 	$('.stop').removeAttr("disabled");
 	$('#kerrovitsi').removeAttr("disabled");
 	$('#not_online').hide()
+}
+
+/**
+ * @author       Rob W <gwnRob@gmail.com>
+ * @website      http://stackoverflow.com/a/7513356/938089
+ * @version      20131010
+ * @description  Executes function on a framed YouTube video (see website link)
+ *               For a full list of possible functions, see:
+ *               https://developers.google.com/youtube/js_api_reference
+ * @param String frame_id The id of (the div containing) the frame
+ * @param String func     Desired function to call, eg. "playVideo"
+ *        (Function)      Function to call when the player is ready.
+ * @param Array  args     (optional) List of arguments to pass to function func*/
+ 
+function callPlayer(frame_id, func, args) {
+    if (window.jQuery && frame_id instanceof jQuery) frame_id = frame_id.get(0).id;
+    var iframe = document.getElementById(frame_id);
+    if (iframe && iframe.tagName.toUpperCase() != 'IFRAME') {
+        iframe = iframe.getElementsByTagName('iframe')[0];
+    }
+    console.log(iframe);
+
+    // When the player is not ready yet, add the event to a queue
+    // Each frame_id is associated with an own queue.
+    // Each queue has three possible states:
+    //  undefined = uninitialised / array = queue / 0 = ready
+    if (!callPlayer.queue) callPlayer.queue = {};
+    var queue = callPlayer.queue[frame_id],
+        domReady = document.readyState == 'complete';
+
+    if (domReady && !iframe) {
+        // DOM is ready and iframe does not exist. Log a message
+        window.console && console.log('callPlayer: Frame not found; id=' + frame_id);
+        if (queue) clearInterval(queue.poller);
+    } else if (func === 'listening') {
+        // Sending the "listener" message to the frame, to request status updates
+        if (iframe && iframe.contentWindow) {
+            func = '{"event":"listening","id":' + JSON.stringify(''+frame_id) + '}';
+            iframe.contentWindow.postMessage(func, '*');
+        }
+    } else if (!domReady ||
+               iframe && (!iframe.contentWindow || queue && !queue.ready) ||
+               (!queue || !queue.ready) && typeof func === 'function') {
+        if (!queue) queue = callPlayer.queue[frame_id] = [];
+        queue.push([func, args]);
+        if (!('poller' in queue)) {
+            // keep polling until the document and frame is ready
+            queue.poller = setInterval(function() {
+                callPlayer(frame_id, 'listening');
+            }, 250);
+            // Add a global "message" event listener, to catch status updates:
+            messageEvent(1, function runOnceReady(e) {
+                if (!iframe) {
+                    iframe = document.getElementById(frame_id);
+                    if (!iframe) return;
+                    if (iframe.tagName.toUpperCase() != 'IFRAME') {
+                        iframe = iframe.getElementsByTagName('iframe')[0];
+                        if (!iframe) return;
+                    }
+                }
+                if (e.source === iframe.contentWindow) {
+                    // Assume that the player is ready if we receive a
+                    // message from the iframe
+                    clearInterval(queue.poller);
+                    queue.ready = true;
+                    messageEvent(0, runOnceReady);
+                    // .. and release the queue:
+                    while (tmp = queue.shift()) {
+                        callPlayer(frame_id, tmp[0], tmp[1]);
+                    }
+                }
+            }, false);
+        }
+    } else if (iframe && iframe.contentWindow) {
+        // When a function is supplied, just call it (like "onYouTubePlayerReady")
+        if (func.call) return func();
+        // Frame exists, send message
+        iframe.contentWindow.postMessage(JSON.stringify({
+            "event": "command",
+            "func": func,
+            "args": args || [],
+            "id": frame_id
+        }), "*");
+    }
+    /* IE8 does not support addEventListener... */
+    function messageEvent(add, listener) {
+        var w3 = add ? window.addEventListener : window.removeEventListener;
+        w3 ?
+            w3('message', listener, !1)
+        :
+            (add ? window.attachEvent : window.detachEvent)('onmessage', listener);
+    }
 }

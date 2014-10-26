@@ -44,8 +44,5 @@ foreach ($result as $row){
 }
 
 
-$row = $db->query("SELECT * FROM youtube ORDER by rowid DESC")[0];
-
-echo '<a href="'.$row['link'].'">'.$row['name'].'</a>';
 $db=NULL;
 echo "";

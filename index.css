@@ -58,11 +58,12 @@ cursor:pointer;
 font-weight:bold;
 }
 
-button {
+button, #modbox {
 	background-color:#fff;
 	border:1px solid #c0bfbf;
 	border-radius:6px;
 	padding:8px 22px;
+	margin:1px 1px;
 	min-width:65px;
 	color:#7f7f7f;
 	transition:color .1s linear;
@@ -73,7 +74,7 @@ button {
 	-moz-transition:background-color .1s linear;
 }
 button:hover{
-	background-color:#4d9edd;
+	background-color:#4d9edd !important;
 	color:#fff;
 	border-color:#3079b3;
 	cursor: pointer;

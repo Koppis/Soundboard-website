@@ -2,6 +2,7 @@
 
 function initDB ($db) {
     $schema = array("CREATE TABLE changes (name VARCHAR PRIMARY KEY, revision INT)",
+    "create table cookiedata (identifier varchar PRIMARY KEY, recordinglayout varchar)",
     "INSERT INTO changes VALUES ('vitsit',0)",
     "INSERT INTO changes VALUES ('emoticons',0)",
     "INSERT INTO changes VALUES ('recordings',0)",
