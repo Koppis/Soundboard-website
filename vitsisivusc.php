@@ -35,7 +35,7 @@ break;
 
 case 2: //Edit a joke
 
-    $db->exec(sprintf("UPDATE vitsit SET vitsi='%s' WHERE rowid=%s",$_POST['new'],$_POST['id']));
+    $db->exec(sprintf("UPDATE vitsit SET vitsi='%s' WHERE rowid=%s",$_POST['newname'],$_POST['id']));
     $db->exec("UPDATE changes SET revision = revision + 1 WHERE name = 'vitsit'");
 
 break;

@@ -19,6 +19,121 @@ class DatabaseCheck {
     }
 }
 
+class Memes extends DatabaseCheck {
+
+	
+	public function __construct($db,$revision) {
+		$this->db = $db;
+		$this->query = "SELECT * FROM memes WHERE rowid = 1 AND rating > $revision";
+	}
+	
+        
+	public function getdata() {
+		if (isset($this->result)) {
+            $result = $this->db->query("SELECT * FROM memes");
+            $session = $GLOBALS['session_id'];
+
+            $data = array();
+            foreach ($result as $row){
+
+                $rec = $row['rec'];
+                $myrate = NULL;
+                if ($rec != '') {
+                $myrate = $this->db->query("SELECT * FROM memeratings WHERE user = '$session' AND rec = $rec");
+                if (!empty($myrate))
+                    $myrate = $myrate[0]['rating'];
+                else
+                    $myrate = NULL;
+                } 
+                
+				$data[] = array('rec'=>$rec,'vitsi'=>$row['vitsi'],'rating'=>$row['rating'],'myrating'=>$myrate);
+			}
+            
+			return $data;
+		}
+	}
+}
+
+
+class Processes extends DatabaseCheck {
+
+	
+	public function __construct($db,$revision) {
+		$this->db = $db;
+		$this->query = "SELECT * FROM processes_revision WHERE revision IS NOT $revision";
+	}
+	
+        
+	public function getdata() {
+		if (isset($this->result)) {
+            $result = $this->db->query("SELECT * FROM processes");
+            $data = array();
+			foreach ($result as $row){		
+				$data[] = array('pid'=>$row['pid'],'name'=>$row['name']);
+			}
+            
+			$data[] = intval($this->result[0]['revision']);
+            
+			return $data;
+		}
+	}
+}
+
+class TeamspeakChat extends DatabaseCheck {
+
+	
+	public function __construct($db,$lastRow) {
+		$this->db = $db;
+		$this->query = "SELECT rowid,* FROM teamspeak_chat WHERE rowid > {$lastRow} ".
+						"ORDER BY rowid DESC LIMIT 20";
+	}					
+	
+        
+	public function getdata() {
+		if (isset($this->result)) {
+			foreach ($this->result as $row){
+				$text = $row['msg'];
+				$text = stripslashes($text);			
+				$new_messages[] = array('rowid'=>$row['rowid'],'pvm'=>$row['pvm'],
+					'user'=>$row['user'],'msg'=>$text);
+			}
+			
+			return array_reverse($new_messages);
+		}
+	}
+}
+
+class Teamspeak extends Databasecheck {
+	public function __construct($db,$revision) {
+        $this->db = $db;
+        $this->revision = $revision;
+		$this->query = "SELECT * FROM teamspeak_changes WHERE id IS NOT $revision";
+    }
+
+    public function getdata () {
+        $data = array();
+            $result = $this->db->query("SELECT * FROM teamspeak_channels");
+            
+            foreach ($result as $row) {
+                $data [] = array('type'=>1, 'id' => intval($row['id']), 'name'=> $row['name'], 'parent'=>intval($row['parent']));
+            }
+
+            $result = $this->db->query("SELECT * FROM teamspeak_clients");
+
+            foreach ($result as $row) {
+                $data [] = array('type'=>0, 'id' => intval($row['id']), 'name'=> $row['name'], 'channel'=>intval($row['channel']),
+                    'online'=>1, 'mode'=>intval($row['mode']));
+            }
+
+            $data[] = intval($this->result[0]['id']);
+        
+            
+        
+        return $data;
+    }
+}
+
+
 class Cookie extends Databasecheck {
 	public function __construct($db,$rowid,$id) {
 		$this->db = $db;
@@ -47,20 +162,31 @@ class Youtube extends Databasecheck {
 
 class Recordings extends Databasecheck {
 	public function __construct($db,$revision) {
-		$this->db = $db;
-		$this->query = "SELECT revision FROM changes WHERE name = 'recordings' AND revision > $revision";
+        $this->db = $db;
+        $this->revision = $revision;
+		$this->query = "SELECT revision, id FROM changes WHERE name = 'recordings' AND revision > $revision";
     }
 
     public function getdata () {
+        $newrevision = $this->result[0]['revision'];
         $data = array();
-        $result = $this->db->query('SELECT *, rowid FROM recordings WHERE deleted IS NOT 1 ORDER BY rowid DESC');
-        foreach ($result as $row) {
-            $data[] = array('rowid' => $row['rowid'], 'name' => $row['name'], 'playcount' => $row['playcount'],
-                         'category' => $row['category']);
+
+        if ($this->revision == $newrevision - 1) {
+                $id = $this->result[0]['id'];
+                $row = $this->db->query("SELECT *, rowid FROM recordings WHERE rowid = $id")[0];
+                $data = array('justone' => 1, 'rowid' => $row['rowid'], 'name' => $row['name'], 'playcount' => $row['playcount'],
+                             'category' => $row['category'], 'deleted' => $row['deleted'], 'revision' => $newrevision,
+                             'date' => $row['date']);
+        } else {
+            $result = $this->db->query('SELECT *, rowid FROM recordings WHERE deleted IS NOT 1 ORDER BY rowid DESC');
+            foreach ($result as $row) {
+                $data[] = array('rowid' => $row['rowid'], 'name' => $row['name'], 'playcount' => $row['playcount'],
+                             'category' => $row['category'], 'date' => $row['date']);
+            }
+            $data[] = $newrevision;
+
         }
-        
-        $data[] = $this->result[0]['revision'];
-        return $data;
+                return $data;
     }
 
 }
@@ -143,7 +269,7 @@ class Record extends DatabaseCheck {
 class Users extends DatabaseCheck {
 	public function __construct($db,$time,$known_users) {
 		$this->db = $db;
-		$this->query = "SELECT name FROM users WHERE connected = 1 AND ({$time} - lastpoll < 65)";
+		$this->query = "SELECT nickname FROM users WHERE connected = 1 AND ({$time} - lastpoll < 65)";
 		$this->known_users = $known_users;
 	}
 	
@@ -154,7 +280,7 @@ class Users extends DatabaseCheck {
         $this->result = $db->query($this->query);
     	$this->new_users = array();
 		foreach ($this->result as $row){
-			$this->new_users[] = $row['name'];
+			$this->new_users[] = $row['nickname'];
 		}
     	if ($this->known_users == $this->new_users){
     		return false;
@@ -175,7 +301,7 @@ class Messages extends DatabaseCheck {
 	
 	public function __construct($db,$lastRow) {
 		$this->db = $db;
-		$this->query = "SELECT shoutbox.rowid, shoutbox.*, users.color FROM shoutbox JOIN users ON ".
+		$this->query = "SELECT shoutbox.rowid, shoutbox.*, users.color, users.nickname FROM shoutbox JOIN users ON ".
 						"shoutbox.user = users.name WHERE shoutbox.rowid > {$lastRow} ".
 						"ORDER BY shoutbox.rowid DESC LIMIT 50";
 	}					
@@ -198,7 +324,7 @@ class Messages extends DatabaseCheck {
 						$e['linkki'].'">',$text);
 			
 				$new_messages[] = array('rowid'=>$row['rowid'],'time'=>$row['pvm'],
-					'user'=>$row['user'],'msg'=>$text,'color'=>$row['color']);
+					'user'=>$row['nickname'],'msg'=>$text,'color'=>$row['color']);
 			}
 			
 			return array_reverse($new_messages);
@@ -223,7 +349,17 @@ $recordings = (isset($_GET['recordings_revision']) && !empty($_GET['recordings_r
 $youtube_rowid = (isset($_GET['youtube_rowid']) && !empty($_GET['youtube_rowid'])) ? $_GET['youtube_rowid']:0;
 $cookie_rowid = (isset($_GET['cookie_rowid']) && !empty($_GET['cookie_rowid'])) ? $_GET['cookie_rowid']:0;
 $session_id = (isset($_GET['session_id']) && !empty($_GET['session_id'])) ? $_GET['session_id']:0;
+$teamspeak_revision = (isset($_GET['teamspeak_revision']) && !empty($_GET['teamspeak_revision'])) ? $_GET['teamspeak_revision'] : 0;
+$teamspeak_chat_rowid = (isset($_GET['teamspeak_chat_rowid']) && !empty($_GET['teamspeak_chat_rowid'])) ? $_GET['teamspeak_chat_rowid'] : 0;
+$processes_rowid = (isset($_GET['processes_revision']) && !empty($_GET['processes_revision'])) ? $_GET['processes_revision'] : 0;
+$memes_revision = (isset($_GET['memes_revision']) && !empty($_GET['memes_revision'])) ? $_GET['memes_revision'] : 0;
 
+
+
+
+
+$GLOBALS["session_id"] = $session_id;
+$ipaddress = $_SERVER['REMOTE_ADDR'];
 
 
 $date = date('Y-m-d H:i:s');
@@ -233,17 +369,19 @@ $time_wasted=0;
 
 $db = new myDatabase();
 if ($user !== 0){
-    if (@$db->exec("INSERT INTO users (name,connected,lastpoll)".
-        " VALUES ('{$user}',1,'{$time}')") == false){
-        $db->exec("UPDATE users SET connected=1, lastpoll={$time}".
-            " WHERE name='{$user}'");
-    }
+    if (($db->exec("UPDATE users SET nickname='$user', connected=1, lastpoll={$time}, ip='$ipaddress' WHERE name='$session_id'")) == 0)
+        $db->exec("INSERT INTO users (name,connected,lastpoll,nickname) VALUES ('$session_id',1,'$time','$user')");
+        
+    
 }
 
 
 
 $checks = array();
-$checks['cookie'] = new Cookie($db,$cookie_rowid,$session_id);
+$checks['memes'] = new Memes($db,$memes_revision);
+$checks['processes'] = new Processes($db,$processes_rowid);
+$checks['teamspeakchat'] = new TeamspeakChat($db,$teamspeak_chat_rowid);
+$checks['teamspeak'] = new Teamspeak($db,$teamspeak_revision);
 $checks['youtube'] = new Youtube($db,$youtube_rowid);
 $checks['recordings'] = new Recordings($db,$recordings);
 $checks['emoticons'] = new Emoticons($db,$emoticons_revision);

@@ -77,14 +77,14 @@ $ex = explode(" ",$vitsi);
 $vitsi = array();
 $counter = 0;
 foreach ($ex as $word){
-    if (strpos($word,"#") !== false ){
+    /*if (strpos($word,"#") !== false ){
         $counter++;
         $vitsi[$counter] .= $word." ";
         $counter++;
-    } else {
+    } else {*/
         $vitsi[$counter] .= $word." ";
         
-    }
+    
         
 }
 
@@ -139,18 +139,35 @@ foreach ($newnewlauseet as $l){
 }
 
 
-echo '<p>valmis<br>';
+echo '<p>valmis<br>'.PHP_EOL;
 $execstr = "";
 foreach( $newnewnewlauseet as $n){
-    $execstr .= (' "http://translate.google.com/translate_tts?tl='
+    $sounds = array();
+    $i = 0;
+    echo "n = $n".PHP_EOL;
+    if (preg_match_all("/#(\S*)/",$n,$sounds) > 0){
+        echo json_encode($sounds);
+        foreach (preg_split("/#\S*/",$n) as $a){
+            echo "a = $a".PHP_EOL;
+            if ($a == "") continue;
+            $execstr .= (' "http://translate.google.com/translate_tts?tl='
+                .$kieli.'&ie=UTF-8&q=' . $a . '"' );
+            $execstr .= (' "F:\\Program Files (x86)\\Apache Group\\Apache24\\sounds\\recorded\\'.$sounds[1][$i].'.wav"');
+            $i ++;
+        }
+    } else {
+        $execstr .= (' "http://translate.google.com/translate_tts?tl='
         .$kieli.'&ie=UTF-8&q=' . $n . '"' );
+    }
+    //$execstr .= (' "http://translate.google.com/translate_tts?tl='
+     //   .$kieli.'&ie=UTF-8&q=' . $n . '"' );
     
 }
 if (key_exists('badumtss',$_POST))
     if ($_POST['badumtss'] == 1) 
         $execstr .= (' "F:\\Program Files (x86)\\Apache Group\\Apache24\\sounds\\badumtss.mp3"');
     
-echo '<p>'.$execstr;
+echo '<p>'.$execstr.PHP_EOL;
 $execstr = utf8_decode($execstr);
 $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 socket_sendto($socket, $execstr, strlen($execstr), 0, "91.156.255.202", 1124);

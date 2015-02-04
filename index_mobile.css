@@ -1,6 +1,6 @@
-.textarea {
+#addjoke, #addemoticon_linkki {
     resize: none;
-    width: 2em !important;
+    width: 7em !important;
 }
 #hideemos {
 	display:block !important; 
@@ -17,8 +17,12 @@
 }
 
 html {
-	word-wrap: break-word;
-	word-break:break-all;
+	/*word-wrap: break-word;
+	word-break:break-word;*/
+}
+
+#teamspeakchat,.sbutton {
+    word-break:break-word;
 }
 
 #pagelayout>tbody>tr:first-child > td:first-child, .color, #kieli {
@@ -109,7 +113,7 @@ button:disabled{
 button:disabled:hover{
     cursor: default;
 }
-div#not_online{
+div.not_online{
 	position: fixed;
 	top: 120px; left 0px;
 	left: 10%;

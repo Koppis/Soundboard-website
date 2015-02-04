@@ -30,7 +30,9 @@ if ($count['count'] == $rowcount)
     die();
 
 //Sitten vasta itse viesteistä
-$result = $db->query("SELECT rowid, * FROM shoutbox ORDER BY pvm DESC LIMIT {$kohta}, 500");
+$result = $db->query("SELECT shoutbox.rowid, shoutbox.*, users.color, users.nickname FROM shoutbox JOIN users ON ".
+						"shoutbox.user = users.name ".
+						"ORDER BY shoutbox.rowid DESC LIMIT {$kohta}, 500");
 
 
 if ($kohta == 0)
@@ -53,8 +55,8 @@ $text = $row['msg'];
         
         
     $returnvalue .= ('<tr id="'.$row['rowid'].'"><td>' 
-    . $row['pvm'] . '</td><td><span class="'.$row['user'].' username" style="color:'.$c.'">' 
-    . $row['user'] . '</span></td><td>' 
+    . $row['pvm'] . '</td><td><span class="'.$row['nickname'].' username" style="color:'.$c.'">' 
+    . $row['nickname'] . '</span></td><td>' 
     . $text . "</td></tr>\n");
 }
 if ($kohta == 0)

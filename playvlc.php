@@ -11,12 +11,17 @@ function utf8_urldecode($str) {
 #$_POST['path'] = utf8_decode($_POST['path']);
 $db = new myDatabase();
 
-
 $file_parts = pathinfo($_POST['path']);
 
 echo $_POST['path'];
 
 $msg = $_POST['path'];
+
+if (substr($msg,0,5) == "vitsi") {
+    $_POST['vitsi'] = substr($msg,5);
+    $_POST['kieli'] = 'fi';
+    require_once('tts.php');
+} else {
 
 
 if (substr($msg,7,8) == "recorded") {
@@ -47,6 +52,7 @@ socket_sendto($socket, $msg, strlen($msg), 0, "91.156.255.202", 1126);
 socket_sendto($socket, $msg, strlen($msg), 0, "91.156.255.202", 1127);
 socket_close($socket);
 
+}
 
 function youtube_title($id) {
   $video_info = file_get_contents("http://youtube.com/get_video_info?video_id=".$id);
