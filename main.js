@@ -1006,6 +1006,10 @@ function longPoll(loop) {
 
 
                     }
+                    if (payload.rec != undefined) {
+                        recording = payload.rec;
+                        handle_recording_state(recording);
+                    }
                     if (payload.recordings != undefined &&
                         parseInt(payload.recordings[payload.recordings.length - 1]) != recordings_revision) {
 
