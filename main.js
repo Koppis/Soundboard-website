@@ -1284,8 +1284,9 @@ function longPoll(loop) {
                             $.each(payload.memes, function (i,e) {
                                 if (e.rec != null) {
                                     b = $('.recording[title='+e.rec+']').first();
+                                    style = (e.myrating == null ? 'style="background-color:#FF0000;"' : "");
                                     meme = '<div style="display:inline-block;margin:10px" rec="'+e.rec+
-                                    '"><button class="sbutton" title="'+e.rec+'" value="'+b.val()+'">'+
+                                    '"><button class="sbutton" '+style+' title="'+e.rec+'" value="'+b.val()+'">'+
                                     b.html()+'</button>'+(e.myrating != null ? e.myrating/2 : "")+
                                     '<div data-myscore="'+(e.myrating != null ? e.myrating/2 : -1)+
                                     '" class="memerating" data-score="'+(e.rating/2)+'"></div></div>';
@@ -1294,11 +1295,13 @@ function longPoll(loop) {
                                     teksti = v.contents().filter(function(){ 
                                           return this.nodeType == 3; 
                                         })[0].nodeValue
+                                    
                                     meme = '<div style="display:inline-block;margin:10px" vitsi="'+e.vitsi+
-                                    '"><button class="sbutton" title="'+e.vitsi+'" value="vitsi'+teksti+'">'+
+                                    '"><button class="sbutton"  title="'+e.vitsi+'" value="vitsi'+teksti+'">'+
                                     teksti+'</button>'+(e.myrating != null ? e.myrating/2 : "")+
                                     '<div data-myscore="'+(e.myrating != null ? e.myrating/2 : -1)+
                                     '" class="vitsi_memerating" data-score="'+(e.rating/2)+'"></div></div>';
+                                    
                                 }
                                 newmemes += meme;
                             })
