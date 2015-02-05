@@ -9,29 +9,26 @@
     <link id="dynamic-favicon" rel="shortcut icon" href="/kappa.png?v=1" />
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
 
-	<link rel="stylesheet" media="(max-device-width: 800px)" type="text/css" href="index_mobile.css?1">
-	<meta name="viewport" content="width=device-width" />
-	<!--<link rel="stylesheet" media="(min-width: 800px)" type="text/css" href="index_tablet.css">-->
-	<link rel="stylesheet" media="(min-device-width: 800px)" type="text/css" href="index.css?4">
+	<link rel="stylesheet" media="(max-device-width: 800px)" type="text/css" href="css/index_mobile.css?1">
+	<link rel="stylesheet" media="(min-device-width: 800px)" type="text/css" href="css/index.css?4">
+
+    <link rel="stylesheet" href="css/jquery.raty.css">
+    <script src="scripts/lib/jquery.raty.js"></script>
+
+    <script src="scripts/lib/jquery.cookie.js"></script>
+
+    <script src="scripts/lib/jscolor.js"></script>
 
 
-
-    <script src="jquery.cookie.js"></script>
-	
-    <script type="text/javascript" src="jscolor/jscolor.js"></script>
-
-	<link rel="stylesheet" href="raty/lib/jquery.ratingy.css">
-	<script type="text/javascript" src="raty/lib/jquery.raty.js"></script>
 
 </head>
 
-<body style="margin: 0px; padding: 0px; display:none;">
-    <script type="text/javascript" src="soundboard.js?40"></script>	
-	<table id="pagelayout" style="height: 100%;width: 100%;" 
+<body style="margin: 0px; padding: 0px; display:default;">
+
+    <table id="pagelayout" style="height: 100%;width: 100%;" 
 	cellpadding="3" cellspacing="0" border="0">
 		<!--<tr>
 			<td colspan="2" style="height: 100px;" bgcolor="#FAFAFA" >
@@ -528,7 +525,7 @@
 	</table>
 
 
-
+	<script src="main.js"></script>
 </body>
 </html>
 
