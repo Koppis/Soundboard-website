@@ -1,4 +1,4 @@
-function (payload_memes){
+function handle_payload_memes (payload_memes){
     memes_revision = payload_memes.shift().rating;
     payload_memes.sort(function(a,b) {return (b.rating) - parseFloat(a.rating)})
     //if ($('#memet').text() == "") {
