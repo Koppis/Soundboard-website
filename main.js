@@ -32,7 +32,30 @@ $('body').on("click", "img.emoticon", function(e) {
 $('body').on("click", "#hideemos", function() {
     $('#emoticons').toggle();
 });
-﻿
+function handle_payload_emoticons(payload_emoticons) {
+    emoticons_revision = payload_emoticons.pop();
+    console.log(emoticons_revision);
+    $('#emoticons_tab').html('<ul></ul>');
+    $('#emoticons').html('');
+    newhtml = '';
+    newhtml_tab = '';
+    $.each(payload_emoticons, function(i, emo) {
+
+        newhtml += '<img style="max-width:50px;max-height:50px"src="' + emo.linkki + '" alt="' + emo.sana + '" class="emoticon"/>';
+
+        newhtml_tab +=
+            '<li>' +
+            '<button style="padding:2px;min-width:40px;" class="deleteemo">X</button>' +
+            '<span>' + emo.sana + '</span> -- ' +
+            '<img style="max-width:50px;max-height:50px"src="' +
+            emo.linkki + '"/></li>';
+    });
+
+    $('#emoticons').html(newhtml);
+
+    $('#emoticons_tab ul').html(newhtml_tab);
+
+}﻿
 
 //init
 var version = 12;
@@ -462,185 +485,14 @@ function longPoll(loop) {
 
                     }
                     if (payload.emoticons != undefined) {
-                        emoticons_revision = payload.emoticons.pop();
-                        console.log(emoticons_revision);
-                        $('#emoticons_tab').html('<ul></ul>');
-                        $('#emoticons').html('');
-                        newhtml = '';
-                        newhtml_tab = '';
-                        $.each(payload.emoticons, function(i, emo) {
-
-                            newhtml += '<img style="max-width:50px;max-height:50px"src="' + emo.linkki + '" alt="' + emo.sana + '" class="emoticon"/>';
-
-                            newhtml_tab +=
-                                '<li>' +
-                                '<button style="padding:2px;min-width:40px;" class="deleteemo">X</button>' +
-                                '<span>' + emo.sana + '</span> -- ' +
-                                '<img style="max-width:50px;max-height:50px"src="' +
-                                emo.linkki + '"/></li>';
-                        });
-
-                        $('#emoticons').html(newhtml);
-
-                        $('#emoticons_tab ul').html(newhtml_tab);
-
-
+                        handle_payload_emoticons(payload.emoticons);
                     }
                     if (payload.rec != undefined) {
                         recording = payload.rec;
                         handle_recording_state(recording);
                     }
-                    if (payload.recordings != undefined &&
-                        parseInt(payload.recordings[payload.recordings.length - 1]) != recordings_revision) {
-
-                        if (payload.recordings.justone != undefined) {
-
-                            if ($('.recording[title="' + payload.recordings.rowid + '"]').length == 0 &&
-                                payload.recordings.deleted != 1 && payload.recordings.deleted != "1") {
-
-
-                                name = payload.recordings.name;
-                                if (payload.recordings.name == null || payload.recordings.name == '1')
-                                    name = payload.recordings.rowid;
-
-
-                                newbutton = $('<button' +
-                                    ' class="sbutton recording" title="' + payload.recordings.rowid +
-                                    '" value="sounds\\recorded\\' + (payload.recordings.rowid) + '.wav">' + (name) + '</button>');
-
-                                $($("#recordings").children(".recording")[0]).before(newbutton);
-
-                            }
-
-                            recordings_revision = payload.recordings.revision;
-
-                            var rec = $('#recordings[title="' + payload.recordings.rowid + '"]');
-                            $(rec).html(payload.recordings.name);
-
-                            if (payload.recordings.deleted == 1 || payload.recordings.deleted == "1")
-                                $(rec).remove();
-                            if (payload.recordings.category != undefined) {
-                                $.each($('.rcategory[value="' + payload.recordings.category + '"] .recording'), function(i, element) {
-                                    if (parseInt($(rec).attr("title")) > parseInt($(element).attr("title"))) {
-                                        $(element).before(rec);
-                                        return false;
-                                    }
-                                });
-                            } else {
-                                $.each($('#recordings > .recording'), function(i, element) {
-                                    if (parseInt($(rec).attr("title")) > parseInt($(element).attr("title"))) {
-                                        $(element).before(rec);
-                                        return false;
-                                    }
-                                });
-
-                            }
-
-
-                        } else {
-
-                            recordings_revision = parseInt(payload.recordings.pop());
-
-                            div_recordings = document.getElementById('recordings'); 
-                            div_recordings.innerHTML = '<div id="rcat_1" style="float:left;width:50%;" ></div>'+
-                                '<div id="rcat_2" style="float:left;width:50%;" ></div>'+
-                                '<br style="clear:both" />';
-
-                            biggest = 0;
-                            rec_playcounts = [];
-                            console.log("line 816: " + (new Date().getTime() - start_time) + "ms");
-
-                            cats = {};
-                            $.each($('.rcategory'), function() {
-                                cats[$(this).attr('value')] = $(this);
-                            });
-
-                            $.each(payload.recordings.reverse(), function(i, rec) {
-
-
-                                rec_playcounts[parseInt(rec.rowid)] = (parseInt(rec.playcount));
-                                if (rec.playcount > biggest)
-                                    biggest = rec.playcount;
-
-                                if (rec.category != undefined && rec.category != "null") {
-                                    if (!(rec.category in cats)) { //$('.rcategory[value="' + rec.category + '"]').length == 0) {
-
-
-                                        newdiv = '<div class="rcategory" value="'+rec.category+'" style="'+
-                                            "min-height:77;"+
-                                            "min-width:100;"+
-                                            "border:2px solid;"+
-                                            "margin:10px;"+
-                                            "padding:5px;"+
-                                            '">' + rec.category + '<p></div>';
-                                        cats[rec.category] = newdiv;
-
-                                    }
-                                }
-                            });
-                            console.log("line a: " + (new Date().getTime() - start_time) + "ms");
-                            prevdate = "";
-
-
-                            var newrecordings = '';
-                            tocat = [];
-                            $.each(payload.recordings.reverse(), function(i, rec) {
-
-                                name = rec.name;
-                                if (rec.name == null || rec.name == '1')
-                                    name = rec.rowid;
-
-
-
-                                newbutton = '<button' +
-                                    ' class="sbutton recording" title="' + rec.rowid +
-                                    '" value="sounds\\recorded\\' + (rec.rowid) + '.wav">' + (name) + '</button>';
-
-
-
-                                if (rec.category != undefined && rec.category != "null") {
-                                    //$('.rcategory[value="' + rec.category + '"]').append(newbutton);
-                                    //tocat[rec.category] += newbutton;
-                                     cats[rec.category] = cats[rec.category].splice(cats[rec.category].length - 6,0,newbutton);
-                                } else {
-                                    if (rec.date != prevdate) {
-                                        //$('#recordings').append("<br>" + rec.date + "<br>");
-                                        newrecordings += ("<br>" + rec.date + "<br>");
-                                    }
-                                    prevdate = rec.date;
-                                    //$('#recordings').append(newbutton);
-                                    newrecordings += newbutton;
-                                }
-
-                            });
-                            var index;
-                            $.each(cats,function(i,e){
-                                div_recordings.innerHTML = e + div_recordings.innerHTML;
-                            })
-                            console.log("line b: " + (new Date().getTime() - start_time) + "ms");
-
-                            div_recordings.innerHTML += newrecordings;
-
-                           console.log("line c: " + (new Date().getTime() - start_time) + "ms"); 
-
-
-                            $('.rcategory').each(function() {
-                                if ($('#rcat_1 .sbutton').length < $('#rcat_2 .sbutton').length)
-                                    $('#rcat_1').prepend($(this));
-                                else
-                                    $('#rcat_2').prepend($(this));
-                            });
-
-
-
-                            console.log("line 896: " + (new Date().getTime() - start_time) + "ms");
-
-
-                            console.log("line 919: " + (new Date().getTime() - start_time) + "ms");
-
-
-                            updateplaycounts();
-                        }
+                    if (payload.recordings != undefined) {
+                        handle_recordings(payload.recordings);
                     }
                     console.log((new Date().getTime() - start_time) + "ms");
                             console.log("line d: " + (new Date().getTime() - start_time) + "ms");
@@ -676,78 +528,12 @@ function longPoll(loop) {
                             console.log("line f: " + (new Date().getTime() - start_time) + "ms");
 
                     if (payload.teamspeak != undefined) {
-                        //if (payload.teamspeak.changes != undefined) {
-                        teamspeak_revision = payload.teamspeak.pop();
-
-                        newlist = $("<ul></ul>");
-
-                        $.each(payload.teamspeak, function(i, a) {
-                            if (a.type == 1 && a.parent == 0) {
-                                $(newlist).append('<li style="list-style-type: none;" value="' + a.id + '">' +
-                                    '<img src="teamspeak/images/default_colored_2014/channel_green_subscribed.png" /> ' + a.name + "<ul></ul></li>");
-                            }
-                        });
-                        $.each(payload.teamspeak, function(i, a) {
-                            if (a.type == 1 && a.parent != 0) {
-                                $(newlist).find('li[value="' + a.parent + '"]').children('ul').append('<li style="list-style-type: none;" value="' + a.id + '">' +
-                                    '<img src="teamspeak/images/default_colored_2014/channel_green_subscribed.png" /> ' + a.name + '<ul></ul></li>');
-                            }
-                        });
-                        $.each(payload.teamspeak, function(i, a) {
-                            if (a.type == 0 && a.online == 1) {
-                                var clienticon = $('<li style="list-style-type: none;" class="ts_client" value="' + a.id + '">' + a.name + '</li>');
-                                $(newlist).find('li[value="' + a.channel + '"]').children('ul').prepend(clienticon);
-                                switch (a.mode) {
-                                    case 0:
-                                        clienticon.prepend('<img src="teamspeak/images/default_colored_2014/player_off.png" /> ');
-                                        break;
-                                    case 1:
-                                        clienticon.prepend('<img src="teamspeak/images/default_colored_2014/input_muted.png" /> ');
-                                        break;
-                                    case 2:
-                                        clienticon.prepend('<img src="teamspeak/images/default_colored_2014/output_muted.png" /> ');
-                                        break;
-                                    case 3:
-                                        clienticon.prepend('<img src="teamspeak/images/default_colored_2014/away.png" /> ');
-                                        break;
-                                }
-                            }
-                        });
-
-                        $("#teamspeak").html(newlist);
-
-                        //}
+                        handle_payload_teamspeak(payload.teamspeak);
                     }
                             console.log("line g: " + (new Date().getTime() - start_time) + "ms");
                     if (payload.teamspeakchat != undefined) {
-                        //console.log(payload.teamspeakchat);
-                        teamspeak_chat_rowid = payload.teamspeakchat[payload.teamspeakchat.length - 1].rowid;
-                        if ($('#teamspeakchat').length == 0) {
-                            $('#teamspeak').after('<input type="text" size="33" class="textarea" id="ytchat_input" ' +
-                                'alt="Teamspeak chat" value="Teamspeak chat"></input><br>' +
-                                '<ul id="teamspeakchat" style="padding-left:10px"></ul>');
-                        }
-                        toappend = '';
-                        $.each(payload.teamspeakchat, function(i, e) {
-                            $('#teamspeakchat li:nth-child(20)').remove();
-
-                            msg = e.msg;
-
-                            if ((e.msg).search(/\[URL\](.*)\[\/URL\]/g) != -1) {
-                                msg = msg.replace(/\[URL\]/g, '<a href="');
-                                msg = msg.replace(/\[\/URL\]/g, '">' + ((e.msg).match(/\[URL\](.*)\[\/URL\]/i))[1] + '</a>');
-                            }
-
-                            toappend = '<li style="list-style-type: none;"><b>' + e.user + '</b>: ' + msg + '</li>' + toappend
-
-                        });
-                        $('#teamspeakchat').prepend(toappend);
-                        if (focusvar == 0) {
-                            happening = true;
-                            changeFavicon("/images/kapparoll/tmp-0.gif")
-
-
-                        }
+                        handle_payload_teamspeakchat(payload.teamspeakchat);
+                        
                     }
                             console.log("line h: " + (new Date().getTime() - start_time) + "ms");
 
@@ -1611,7 +1397,75 @@ $('body').on("click", "#enlargeyoutube", function() {
     }
 });
 
-﻿
+function handle_payload_teamspeak(payload_teamspeak) {
+    teamspeak_revision = payload_teamspeak.pop();
+
+    newlist = $("<ul></ul>");
+
+    $.each(payload_teamspeak, function(i, a) {
+        if (a.type == 1 && a.parent == 0) {
+            $(newlist).append('<li style="list-style-type: none;" value="' + a.id + '">' +
+                '<img src="teamspeak/images/default_colored_2014/channel_green_subscribed.png" /> ' + a.name + "<ul></ul></li>");
+        }
+    });
+    $.each(payload_teamspeak, function(i, a) {
+        if (a.type == 1 && a.parent != 0) {
+            $(newlist).find('li[value="' + a.parent + '"]').children('ul').append('<li style="list-style-type: none;" value="' + a.id + '">' +
+                '<img src="teamspeak/images/default_colored_2014/channel_green_subscribed.png" /> ' + a.name + '<ul></ul></li>');
+        }
+    });
+    $.each(payload_teamspeak, function(i, a) {
+        if (a.type == 0 && a.online == 1) {
+            var clienticon = $('<li style="list-style-type: none;" class="ts_client" value="' + a.id + '">' + a.name + '</li>');
+            $(newlist).find('li[value="' + a.channel + '"]').children('ul').prepend(clienticon);
+            switch (a.mode) {
+                case 0:
+                    clienticon.prepend('<img src="teamspeak/images/default_colored_2014/player_off.png" /> ');
+                    break;
+                case 1:
+                    clienticon.prepend('<img src="teamspeak/images/default_colored_2014/input_muted.png" /> ');
+                    break;
+                case 2:
+                    clienticon.prepend('<img src="teamspeak/images/default_colored_2014/output_muted.png" /> ');
+                    break;
+                case 3:
+                    clienticon.prepend('<img src="teamspeak/images/default_colored_2014/away.png" /> ');
+                    break;
+            }
+        }
+    });
+
+    $("#teamspeak").html(newlist);
+}
+function handle_payload_teamspeakchat(payload_teamspeakchat){
+    teamspeak_chat_rowid = payload_teamspeakchat[payload_teamspeakchat.length - 1].rowid;
+    if ($('#teamspeakchat').length == 0) {
+        $('#teamspeak').after('<input type="text" size="33" class="textarea" id="ytchat_input" ' +
+            'alt="Teamspeak chat" value="Teamspeak chat"></input><br>' +
+            '<ul id="teamspeakchat" style="padding-left:10px"></ul>');
+    }
+    toappend = '';
+    $.each(payload_teamspeakchat, function(i, e) {
+        $('#teamspeakchat li:nth-child(20)').remove();
+
+        msg = e.msg;
+
+        if ((e.msg).search(/\[URL\](.*)\[\/URL\]/g) != -1) {
+            msg = msg.replace(/\[URL\]/g, '<a href="');
+            msg = msg.replace(/\[\/URL\]/g, '">' + ((e.msg).match(/\[URL\](.*)\[\/URL\]/i))[1] + '</a>');
+        }
+
+        toappend = '<li style="list-style-type: none;"><b>' + e.user + '</b>: ' + msg + '</li>' + toappend
+
+    });
+    $('#teamspeakchat').prepend(toappend);
+    if (focusvar == 0) {
+        happening = true;
+        changeFavicon("/images/kapparoll/tmp-0.gif")
+
+
+    }
+}﻿
 
 /* 
  * VITSIT
