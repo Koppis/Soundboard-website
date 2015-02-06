@@ -1,4 +1,4 @@
-
+Ôªø
 
 //init
 var version = 12;
@@ -84,7 +84,7 @@ $(window).blur(function() {
     focusvar = 0;
 });
 
-//Yrit‰ disconnectia viel‰, ettei hyv‰ll‰ tuurilla tarvitse timeouttia
+//Yrit√§ disconnectia viel√§, ettei hyv√§ll√§ tuurilla tarvitse timeouttia
 $(window).on("beforeunload", function() {
     $.ajax({
         type: 'GET',
@@ -135,7 +135,7 @@ function chatmessage() {
 
 }
 
-//Kun painetaan viestikent‰ss‰ enter tai ylˆsalas
+//Kun painetaan viestikent√§ss√§ enter tai yl√∂salas
 $("body").on('keydown', '#tts', function(a) {
     if (a.keyCode == 40) {
         if (shoutbox_counter < (ma.length - 1)) {
@@ -166,7 +166,7 @@ $("body").on('click', "#sendmsg", function() {
     chatmessage();
 });
 
-//Lis‰t‰‰n emoticon
+//Lis√§t√§√§n emoticon
 $("body").on('click', "#addemoticon", function() {
 
     var s = $("#addemoticon_sana").val();
@@ -185,7 +185,7 @@ $("body").on('click', "#addemoticon", function() {
 
 });
 
-//Lis‰‰ viestej‰
+//Lis√§√§ viestej√§
 $("body").on('click', '#moreshouts', function() {
     var rowcount = $('#shoutbox table tbody tr').length;
     $.ajax({
@@ -499,7 +499,7 @@ $("body").on("keypress", "#modifyrecording", function(e) {
 
 //poista reconrding
 $('body').on("click", "#deleterecording", function() {
-    //if (confirm("Oletko varma, ett‰ haluat poistaa aanityksen?")) {
+    //if (confirm("Oletko varma, ett√§ haluat poistaa aanityksen?")) {
     $.ajax({
         type: 'POST',
         url: 'deleterecording.php',
@@ -534,13 +534,13 @@ $('body').on("click", ".recordbutton", function() {
  * ***************************************************************************************
  */
 
-//Piilota ‰‰nikategoria
+//Piilota √§√§nikategoria
 $('body').on("click", ".hidecat", function() {
     $(this).next().children().toggle('fast');
 
 });
 
-//Toista ‰‰ni
+//Toista √§√§ni
 $('body').on("click", ".sbutton", function() {
     if (!$(this).is(":disabled")) {
 
@@ -559,108 +559,15 @@ $('body').on("click", ".sbutton", function() {
 });
 
 
-/* 
- * VITSIT
- */
-//Lis‰t‰‰n vitsi
-$("body").on('keypress', '#addjoke', function(e) {
-    if (e.keyCode == 13) {
-        var v = $(this).val();
-        $.ajax({
-            type: 'POST',
-            url: 'vitsisivusc.php',
-            data: {
-                kieli: 'fi',
-                vitsi: v,
-                dothis: 0
-            }
-        });
-        $(this).val("");
-    }
-});
-
-//Kerro vitsi
-$("body").on("click", '#kerrovitsi', function() {
-    $.ajax({
-        data: {
-            kieli: 'fi',
-            vitsi: '**random**',
-            badumtss: 1
-        },
-        url: 'tts.php',
-        type: 'POST',
-        success: function(data) {
-            console.log(data);
-        }
-    });
-});
-
-
-//Toista vitsi
-$("body").on("click", ".toista", function() {
-    var kohde = $(this).parent().prev();
-    var v = kohde.html();
-    console.log(kohde);
-    $.ajax({
-        type: 'POST',
-        url: 'tts.php',
-        data: {
-            kieli: "fi",
-            badumtss: 1,
-            yt: 0,
-            vitsi: v
-        }
-    });
-});
-
-
-//Poista vitsi
-$("body").on("click", ".deletevitsi", function() {
-    var id = $(this).parent().attr("data-rowid");
-    console.log(id);
-    if (confirm("Oletko varma, ett‰ haluat poistaa vitsin?"))
-        deleteVitsi(id);
-});
-//Muokkaa vitsi‰
-$("body").on("click", ".edit_button", function() {
-    var kohde = $(this).parent().prev().prev().prev();
-    console.log(kohde.children());
-    if (kohde.children().is("input")) return;
-    var v = kohde.html();
-    console.log(kohde);
-
-    kohde.html('<input type="text" class="edit_area" value="' +
-        v + '" size="' + (v.length * 1.1) + '">');
-    updating = false;
-    kohde.children("input").focus();
-
-});
-//Vitsinmuokkausalue
-$("body").on("blur", ".edit_area", function() {
-    var id = $(this).parent().parent().attr("id");
-    var v = $(this).val();
-    $("#edit_area").replaceWith(v);
-    editVitsi(id, v);
-
-});
-//Vitsinmuokkausalueen napinpainallus
-$("body").on("keypress", ".edit_area", function(e) {
-    if (e.keyCode == 13) {
-        var id = $(this).parent().parent().attr("id");
-        var v = $(this).val();
-        editVitsi(id, v);
-    }
-});
-
 
 /* 
  * EMOTICONS
  */
 
 
-//Poista hymiˆ
+//Poista hymi√∂
 $('body').on("click", ".deleteemo", function() {
-    if (confirm("Oletko varma, ett‰ haluat poistaa hymiˆn?")) {
+    if (confirm("Oletko varma, ett√§ haluat poistaa hymi√∂n?")) {
         var s = $(this).next().html();
         console.log(s);
         $.ajax({
@@ -675,7 +582,7 @@ $('body').on("click", ".deleteemo", function() {
 });
 
 
-//Klikkaa hymiˆt‰
+//Klikkaa hymi√∂t√§
 $('body').on("click", "img.emoticon", function(e) {
     if ($('#tts').val() == $('#tts').attr('alt'))
         $('#tts').val("");
@@ -718,7 +625,7 @@ $(document).ready(function() {
 
     disablejukebox();
 
-    //Alustaa v‰lilehdet
+    //Alustaa v√§lilehdet
     $("#tabs").tabs({
         activate: function(event, ui) {
             console.log(ui.newTab.index());
@@ -739,7 +646,7 @@ $(document).ready(function() {
 
     }
 
-    //Kekseist‰ haetaan nimi, v‰ri ja viestihistoria
+    //Kekseist√§ haetaan nimi, v√§ri ja viestihistoria
     $.cookie.json = true;
 
     if ($.cookie("yt_open") != undefined)
@@ -831,7 +738,7 @@ function postmessage(usr, msg, kieli, tts) {
     $.cookie("shoutname", usr, {
         expires: 10
     });
-    //Jos pit‰‰ puhua laitetaan tts.phplle
+    //Jos pit√§√§ puhua laitetaan tts.phplle
     if (tts) {
         var $data = {
             kieli: kieli,
@@ -954,7 +861,7 @@ function longPoll(loop) {
                         $.each(payload.vitsit, function(i, vitsi) {
                             newhtml += '<li data-rowid="' +
                                 vitsi.rowid +
-                                '"><button style="padding:2px;min-width:40px;" class="deletevitsi">X</button><button class="vitsi_rate">lis‰‰ memeihin</button>' +
+                                '"><button style="padding:2px;min-width:40px;" class="deletevitsi">X</button><button class="vitsi_rate">lis√§√§ memeihin</button>' +
                                 vitsi.vitsi +
                                 '</li>';
                         });
@@ -1517,29 +1424,6 @@ function updateTJt() {
 }
 
 
-function editVitsi(id, v) {
-    $.ajax({
-        type: 'POST',
-        url: 'vitsisivusc.php',
-        data: {
-            dothis: 2,
-            id: id,
-            newname: v
-        }
-    });
-}
-
-function deleteVitsi(id) {
-    $("#" + id).fadeOut('fast');
-    $.ajax({
-        data: {
-            dothis: 1,
-            id: id
-        },
-        type: 'POST',
-        url: 'vitsisivusc.php'
-    });
-}
 
 function disablejukebox() {
 
@@ -1572,7 +1456,124 @@ function enablejukebox() {
     $('.not_online').hide();
 }
 
-/**
+Ôªø
+
+/* 
+ * VITSIT
+ */
+//Lis‰t‰‰n vitsi
+$("body").on('keypress', '#addjoke', function(e) {
+    if (e.keyCode == 13) {
+        var v = $(this).val();
+        $.ajax({
+            type: 'POST',
+            url: 'vitsisivusc.php',
+            data: {
+                kieli: 'fi',
+                vitsi: v,
+                dothis: 0
+            }
+        });
+        $(this).val("");
+    }
+});
+
+//Kerro vitsi
+$("body").on("click", '#kerrovitsi', function() {
+    $.ajax({
+        data: {
+            kieli: 'fi',
+            vitsi: '**random**',
+            badumtss: 1
+        },
+        url: 'tts.php',
+        type: 'POST',
+        success: function(data) {
+            console.log(data);
+        }
+    });
+});
+
+
+//Toista vitsi
+$("body").on("click", ".toista", function() {
+    var kohde = $(this).parent().prev();
+    var v = kohde.html();
+    console.log(kohde);
+    $.ajax({
+        type: 'POST',
+        url: 'tts.php',
+        data: {
+            kieli: "fi",
+            badumtss: 1,
+            yt: 0,
+            vitsi: v
+        }
+    });
+});
+
+
+//Poista vitsi
+$("body").on("click", ".deletevitsi", function() {
+    var id = $(this).parent().attr("data-rowid");
+    console.log(id);
+    if (confirm("Oletko varma, ett√§ haluat poistaa vitsin?"))
+        deleteVitsi(id);
+});
+//Muokkaa vitsi√§
+$("body").on("click", ".edit_button", function() {
+    var kohde = $(this).parent().prev().prev().prev();
+    console.log(kohde.children());
+    if (kohde.children().is("input")) return;
+    var v = kohde.html();
+    console.log(kohde);
+
+    kohde.html('<input type="text" class="edit_area" value="' +
+        v + '" size="' + (v.length * 1.1) + '">');
+    updating = false;
+    kohde.children("input").focus();
+
+});
+//Vitsinmuokkausalue
+$("body").on("blur", ".edit_area", function() {
+    var id = $(this).parent().parent().attr("id");
+    var v = $(this).val();
+    $("#edit_area").replaceWith(v);
+    editVitsi(id, v);
+
+});
+//Vitsinmuokkausalueen napinpainallus
+$("body").on("keypress", ".edit_area", function(e) {
+    if (e.keyCode == 13) {
+        var id = $(this).parent().parent().attr("id");
+        var v = $(this).val();
+        editVitsi(id, v);
+    }
+});
+
+function editVitsi(id, v) {
+    $.ajax({
+        type: 'POST',
+        url: 'vitsisivusc.php',
+        data: {
+            dothis: 2,
+            id: id,
+            newname: v
+        }
+    });
+}
+
+function deleteVitsi(id) {
+    $("#" + id).fadeOut('fast');
+    $.ajax({
+        data: {
+            dothis: 1,
+            id: id
+        },
+        type: 'POST',
+        url: 'vitsisivusc.php'
+    });
+}/**
  * @author       Rob W <gwnRob@gmail.com>
  * @website      http://stackoverflow.com/a/7513356/938089
  * @version      20131010
