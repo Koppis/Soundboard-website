@@ -1,3 +1,37 @@
+
+/* 
+ * EMOTICONS
+ */
+
+
+//Poista hymiˆ
+$('body').on("click", ".deleteemo", function() {
+    if (confirm("Oletko varma, ett‰ haluat poistaa hymiˆn?")) {
+        var s = $(this).next().html();
+        console.log(s);
+        $.ajax({
+            type: 'post',
+            url: 'emoticonssc.php',
+            data: {
+                dothis: 1,
+                sana: s
+            }
+        });
+    }
+});
+
+
+//Klikkaa hymiˆt‰
+$('body').on("click", "img.emoticon", function(e) {
+    if ($('#tts').val() == $('#tts').attr('alt'))
+        $('#tts').val("");
+    $('#tts').val($('#tts').val() + $(this).attr('alt'));
+    $('#tts').focus();
+});
+//Piilota hymiot
+$('body').on("click", "#hideemos", function() {
+    $('#emoticons').toggle();
+});
 Ôªø
 
 //init
@@ -96,436 +130,9 @@ $(window).on("beforeunload", function() {
     });
 });
 
-/*
- * ***************************************************************************************
- * SHOUTBOX
- * ***************************************************************************************
- */
 
-function chatmessage() {
-    var val = $('#tts').val();
-    var usr = $('#username').val();
 
-    if (val.length > 0 && val.length < 5000 && val != "Text-to-speech") {
-        postmessage(usr, val, $("#kieli").val(), true);
 
-
-
-        value = addslashes(val);
-
-        var edellinen;
-        edellinen = ma.indexOf(value);
-
-        while (edellinen != -1) {
-            ma.splice(edellinen, 1);
-            edellinen = ma.indexOf(value);
-        }
-        if (ma[ma.length - 1] != value)
-            ma.push(value);
-        if (ma.length > 30)
-            ma.splice(0, 1);
-        shoutbox_counter = ma.length;
-
-        $.cookie("sentmessages", JSON.stringify(ma), {
-            expires: 10
-        });
-
-        $("#tts").val('');
-    }
-
-}
-
-//Kun painetaan viestikent√§ss√§ enter tai yl√∂salas
-$("body").on('keydown', '#tts', function(a) {
-    if (a.keyCode == 40) {
-        if (shoutbox_counter < (ma.length - 1)) {
-            shoutbox_counter += 1;
-            $('#tts').val(ma[shoutbox_counter]);
-        } else {
-            shoutbox_counter = ma.length;
-            $('#tts').val("");
-        }
-    }
-    if (a.keyCode == 38) {
-        if (shoutbox_counter > 0)
-            shoutbox_counter -= 1;
-        $('#tts').val(ma[shoutbox_counter]);
-    }
-    if (a.keyCode == 13 && $(this).val() != "") {
-
-        chatmessage();
-
-
-    }
-
-});
-
-
-//Klikataan sendmsg nappia
-$("body").on('click', "#sendmsg", function() {
-    chatmessage();
-});
-
-//Lis√§t√§√§n emoticon
-$("body").on('click', "#addemoticon", function() {
-
-    var s = $("#addemoticon_sana").val();
-    var l = $("#addemoticon_linkki").val();
-    console.log("l = " + l);
-    console.log("s = " + s);
-    $.ajax({
-        type: 'post',
-        url: 'emoticonssc.php',
-        data: {
-            dothis: 0,
-            sana: s,
-            linkki: l
-        }
-    });
-
-});
-
-//Lis√§√§ viestej√§
-$("body").on('click', '#moreshouts', function() {
-    var rowcount = $('#shoutbox table tbody tr').length;
-    $.ajax({
-        type: 'GET',
-        url: 'getshouts.php',
-        data: {
-            dothis: 'getshouts',
-            kohta: rowcount,
-            rowcount: 0
-        },
-        success: function(data) {
-            $('#shoutbox table tbody tr:last-child').after(data);
-        }
-    });
-});
-
-
-/* 
- * ***************************************************************************************
- * SIDEBAR
- * ***************************************************************************************
- */
-
-
-//Youtube-linkki-alue enterpainallus
-$("body").on('keypress', '.youtube', function(e) {
-    if (e.keyCode == 13) {
-        var v = $(this).val();
-        v = v.replace("https", "http");
-        console.log(v);
-        var $path = {
-            yt: 1,
-            path: v
-        };
-        $(this).val("");
-        $.ajax({
-            type: 'POST',
-            url: 'playvlc.php',
-            data: $path,
-            success: function(data) {
-                console.log(data);
-            }
-        });
-    }
-});
-
-
-//Klikataan killpid
-$("body").on('click', '.killpid', function() {
-    $.ajax({
-        type: 'GET',
-        url: 'stopprocess.php',
-        data: {
-            pid: $(this).attr("title")
-        }
-    });
-
-});
-
-//Klikataan stop youtube -nappia
-$("body").on('click', '.stop_youtube', function() {
-    $.ajax({
-        type: 'POST',
-        url: 'playvlc.php',
-        data: {
-            yt: 0,
-            path: "stopyoutube"
-        }
-    });
-
-});
-
-//Klikataan stop music-nappia
-$("body").on("click", ".stop", function() {
-    $.ajax({
-        type: 'POST',
-        url: 'playvlc.php',
-        data: {
-            yt: 0,
-            path: "stop"
-        }
-    });
-
-});
-
-
-//ts_chatin enterpainallus
-$("body").on("keypress", "#ytchat_input", function(e) {
-    if (e.keyCode == 13 && $('#ytchat_input').val() != "") {
-        msg = $('#ytchat_input').val();
-
-
-
-        $.ajax({
-            type: 'POST',
-            url: '/dev/teamspeak/tschatmessage.php',
-            data: {
-                user: $('#username').val(),
-                msg: msg
-            },
-            success: function(msg) {
-                console.log('tschatmessage.php: ');
-                console.log(msg);
-            }
-        });
-        $('#ytchat_input').val('');
-    }
-});
-
-
-
-//click youtubehide
-$('body').on("click", "#hideyoutube", function() {
-    if ($("#youtube").length == 1) {
-        $('#youtube').remove();
-        $.removeCookie('yt_open');
-    } else {
-        $(this).after('<div id="youtube"></div>');
-        $.cookie("yt_open", true, {
-            expires: 10
-        });
-        youtube_rowid = 0;
-        longPoll(true);
-    }
-});
-
-//click youtube enlarge
-$('body').on("click", "#enlargeyoutube", function() {
-    if ($("#youtube").css('position') == "absolute") {
-        $('#youtube').css('position', 'static');
-        $('#youtube').css('z-index', 0);
-        $('#youtube').css('width', '');
-        $('#youtube').css('height', '');
-
-    } else {
-        $('#youtube').css('height', '480px');
-        $('#youtube').css('position', 'absolute');
-        $('#youtube').css('z-index', 1);
-        $('#youtube').css('width', '854px');
-    }
-});
-
-
-/* 
- * ***************************************************************************************
- * RECORDINGS
- * ***************************************************************************************
- */
-
-function handle_recording_state(recording){
-    if (recording == 1) {
-        $('#recordbutton').css('color', 'red');
-        $('#recordbutton').text("*Recording*");
-        //disable record button
-        $('#recordbutton').attr("disabled", "disabled");
-        $('#recordbutton').removeClass("recordbutton");
-        //disable play recorded-button					
-    } else {
-        $('#recordbutton').css('color', 'black');
-        $('#recordbutton').text("Record");
-        //enable buttons
-        $('#recordbutton').removeAttr("disabled");
-        $('#recordbutton').addClass("recordbutton");
-    }
-    console.log("recording: " + recording);
-}
-
-
-
-//Klikataan makedraggable-nappia
-$("body").on('click', '#makedraggable', function() {
-    makerecordingsdraggable();
-    $(this).attr("disabled", "disabled");
-});
-
-
-
-//click new rcategory
-$('body').on("click", "#newrcategory", function() {
-    category = prompt("Anna uuden kategorian nimi");
-    newdiv = $('<div>' + category + '<p></div>');
-    newdiv.attr('class', 'rcategory');
-    newdiv.attr('value', category);
-    newdiv.css('min-height', 77);
-    newdiv.css('min-width', 100);
-    newdiv.css('max-width', '40%');
-    newdiv.css('border', '2px solid');
-    newdiv.css('margin', '10px');
-    newdiv.css('padding', '5px');
-    newdiv.css('float', 'left');
-    newdiv.droppable({
-        accept: ".recording",
-        activeClass: "ui-state-highlight",
-        drop: function(event, ui) {
-            $(this).append(ui.draggable);
-            console.log(ui.draggable.attr('title'));
-            console.log($(this).attr('value'));
-
-            $.ajax({
-                type: 'POST',
-                url: 'moverecording.php',
-                data: {
-                    rowid: ui.draggable.attr('title'),
-                    newcat: $(this).attr('value')
-                }
-            });
-        }
-    });
-    $('#recordings').prepend(newdiv);
-});
-
-
-//right click on recording
-$('body').on("contextmenu", ".recording", function() {
-    if ($("#modifyrecording").length == 0) {
-
-        oldwidth = $(this).width();
-
-        $(this).after('<div id="modbox" rec="'+$(this).attr('title')+'"><input id="modifyrecording" size="7" title="' + $(this).html() + '" value="' + $(this).html() + '"/>' +
-            '<button id="deleterecording" style="padding:2px;min-width:20px;z-index:10;' +
-            'position: relative;left: 10px;top: -8px;margin-left: -2px;margin-top : 10px;">x</button>'+
-            '<div id="raty"></div>'+
-            '</div>');
-
-        $("#modbox").css('position', 'absolute');
-        $("#modbox").css('top', $(this).position().top);
-        $("#modbox").css('left', $(this).position().left);
-        $("#modbox").css("z-index", "10");
-
-        $("#modifyrecording").focus();
-        $("#modifyrecording").select();
-        $(this).attr("disabled", "disabled");
-        $(this).css("position", "relative");
-        $(this).css("z-index", "1");
-        
-
-        $('#raty').raty({numberMax:10,
-                        path:'images/raty',
-            click: memerate_handler});
-        
-        
-            }
-    return false;
-});
-
-function memerate_handler(rating, evt) {
-
-    if (isNaN(parseInt(rating))) rating = 0;
-    
-    console.log("rec : "+$(this).prev().attr('title'));
-    console.log("rating : "+(parseInt(rating)*2));
-    console.log("myrating : "+(parseInt($(this).attr("data-myscore"))));
-
-    if (rating == (parseInt($(this).attr("data-myscore")))) return;
-    
-    $.ajax({
-    type: 'POST',
-    url: 'ratememe.php',
-    data: {
-    rec:$(this).parent().attr('rec'),
-    rating: (parseInt(rating)*2),
-    user:session
-    },
-    success: function(data) {
-    console.log(data);
-    },
-    error: function(data) {
-    console.log(data);
-    }
-
-
-    });
-}
-
-//Modifying a recording
-var modify_recording = function(element) {
-    e_parent = $(element).parent().prev();
-    newname = $(element).val();
-    oldname = $(element).attr('title');
-    rowid = e_parent.attr('title');
-    if (newname != oldname) {
-        $.ajax({
-            type: 'POST',
-            url: 'renamerecording.php',
-            data: {
-                rowid: rowid,
-                newname: newname
-            }
-        });
-
-    }
-
-    e_parent.removeAttr("disabled");
-    e_parent.html(newname);
-    element.parent().remove();
-};
-//recordingmuokkausalue
-$("body").on("blur", "#modifyrecording", function() {
-    setTimeout($.proxy(function() {
-        modify_recording($(this));
-    }, this), 500);
-});
-//recordingmuokkausalueen napinpainallus
-$("body").on("keypress", "#modifyrecording", function(e) {
-    if (e.keyCode == 13) {
-        modify_recording($(this));
-    }
-});
-
-
-
-//poista reconrding
-$('body').on("click", "#deleterecording", function() {
-    //if (confirm("Oletko varma, ett√§ haluat poistaa aanityksen?")) {
-    $.ajax({
-        type: 'POST',
-        url: 'deleterecording.php',
-        data: {
-            rowid: $(this).parent().prev().attr('title')
-        }
-    });
-    recordings_revision += 1;
-    $(this).parent().prev().remove();
-    $('#modbox').remove();
-    //}
-
-});
-
-//Painetaan record-nappia (joka on enabloitu)
-$('body').on("click", ".recordbutton", function() {
-    $.ajax({
-        type: 'POST',
-        url: 'playvlc.php',
-        data: {
-            yt: 0,
-            path: "record"
-        }
-    });
-
-});
 
 
 /* 
@@ -559,40 +166,6 @@ $('body').on("click", ".sbutton", function() {
 });
 
 
-
-/* 
- * EMOTICONS
- */
-
-
-//Poista hymi√∂
-$('body').on("click", ".deleteemo", function() {
-    if (confirm("Oletko varma, ett√§ haluat poistaa hymi√∂n?")) {
-        var s = $(this).next().html();
-        console.log(s);
-        $.ajax({
-            type: 'post',
-            url: 'emoticonssc.php',
-            data: {
-                dothis: 1,
-                sana: s
-            }
-        });
-    }
-});
-
-
-//Klikkaa hymi√∂t√§
-$('body').on("click", "img.emoticon", function(e) {
-    if ($('#tts').val() == $('#tts').attr('alt'))
-        $('#tts').val("");
-    $('#tts').val($('#tts').val() + $(this).attr('alt'));
-    $('#tts').focus();
-});
-//Piilota hymiot
-$('body').on("click", "#hideemos", function() {
-    $('#emoticons').toggle();
-});
 
 
 function vitstirating_handler(score){
@@ -1455,6 +1028,588 @@ function enablejukebox() {
     $('#kerrovitsi').removeAttr("disabled");
     $('.not_online').hide();
 }
+
+
+/* 
+ * ***************************************************************************************
+ * RECORDINGS
+ * ***************************************************************************************
+ */
+
+function handle_recording_state(recording){
+    if (recording == 1) {
+        $('#recordbutton').css('color', 'red');
+        $('#recordbutton').text("*Recording*");
+        //disable record button
+        $('#recordbutton').attr("disabled", "disabled");
+        $('#recordbutton').removeClass("recordbutton");
+        //disable play recorded-button					
+    } else {
+        $('#recordbutton').css('color', 'black');
+        $('#recordbutton').text("Record");
+        //enable buttons
+        $('#recordbutton').removeAttr("disabled");
+        $('#recordbutton').addClass("recordbutton");
+    }
+    console.log("recording: " + recording);
+}
+
+
+
+//Klikataan makedraggable-nappia
+$("body").on('click', '#makedraggable', function() {
+    makerecordingsdraggable();
+    $(this).attr("disabled", "disabled");
+});
+
+
+
+//click new rcategory
+$('body').on("click", "#newrcategory", function() {
+    category = prompt("Anna uuden kategorian nimi");
+    newdiv = $('<div>' + category + '<p></div>');
+    newdiv.attr('class', 'rcategory');
+    newdiv.attr('value', category);
+    newdiv.css('min-height', 77);
+    newdiv.css('min-width', 100);
+    newdiv.css('max-width', '40%');
+    newdiv.css('border', '2px solid');
+    newdiv.css('margin', '10px');
+    newdiv.css('padding', '5px');
+    newdiv.css('float', 'left');
+    newdiv.droppable({
+        accept: ".recording",
+        activeClass: "ui-state-highlight",
+        drop: function(event, ui) {
+            $(this).append(ui.draggable);
+            console.log(ui.draggable.attr('title'));
+            console.log($(this).attr('value'));
+
+            $.ajax({
+                type: 'POST',
+                url: 'moverecording.php',
+                data: {
+                    rowid: ui.draggable.attr('title'),
+                    newcat: $(this).attr('value')
+                }
+            });
+        }
+    });
+    $('#recordings').prepend(newdiv);
+});
+
+
+//right click on recording
+$('body').on("contextmenu", ".recording", function() {
+    if ($("#modifyrecording").length == 0) {
+
+        oldwidth = $(this).width();
+
+        $(this).after('<div id="modbox" rec="'+$(this).attr('title')+'"><input id="modifyrecording" size="7" title="' + $(this).html() + '" value="' + $(this).html() + '"/>' +
+            '<button id="deleterecording" style="padding:2px;min-width:20px;z-index:10;' +
+            'position: relative;left: 10px;top: -8px;margin-left: -2px;margin-top : 10px;">x</button>'+
+            '<div id="raty"></div>'+
+            '</div>');
+
+        $("#modbox").css('position', 'absolute');
+        $("#modbox").css('top', $(this).position().top);
+        $("#modbox").css('left', $(this).position().left);
+        $("#modbox").css("z-index", "10");
+
+        $("#modifyrecording").focus();
+        $("#modifyrecording").select();
+        $(this).attr("disabled", "disabled");
+        $(this).css("position", "relative");
+        $(this).css("z-index", "1");
+        
+
+        $('#raty').raty({numberMax:10,
+                        path:'images/raty',
+            click: memerate_handler});
+        
+        
+            }
+    return false;
+});
+
+function memerate_handler(rating, evt) {
+
+    if (isNaN(parseInt(rating))) rating = 0;
+    
+    console.log("rec : "+$(this).prev().attr('title'));
+    console.log("rating : "+(parseInt(rating)*2));
+    console.log("myrating : "+(parseInt($(this).attr("data-myscore"))));
+
+    if (rating == (parseInt($(this).attr("data-myscore")))) return;
+    
+    $.ajax({
+    type: 'POST',
+    url: 'ratememe.php',
+    data: {
+    rec:$(this).parent().attr('rec'),
+    rating: (parseInt(rating)*2),
+    user:session
+    },
+    success: function(data) {
+    console.log(data);
+    },
+    error: function(data) {
+    console.log(data);
+    }
+
+
+    });
+}
+
+//Modifying a recording
+var modify_recording = function(element) {
+    e_parent = $(element).parent().prev();
+    newname = $(element).val();
+    oldname = $(element).attr('title');
+    rowid = e_parent.attr('title');
+    if (newname != oldname) {
+        $.ajax({
+            type: 'POST',
+            url: 'renamerecording.php',
+            data: {
+                rowid: rowid,
+                newname: newname
+            }
+        });
+
+    }
+
+    e_parent.removeAttr("disabled");
+    e_parent.html(newname);
+    element.parent().remove();
+};
+//recordingmuokkausalue
+$("body").on("blur", "#modifyrecording", function() {
+    setTimeout($.proxy(function() {
+        modify_recording($(this));
+    }, this), 500);
+});
+//recordingmuokkausalueen napinpainallus
+$("body").on("keypress", "#modifyrecording", function(e) {
+    if (e.keyCode == 13) {
+        modify_recording($(this));
+    }
+});
+
+
+
+//poista reconrding
+$('body').on("click", "#deleterecording", function() {
+    //if (confirm("Oletko varma, ett‰ haluat poistaa aanityksen?")) {
+    $.ajax({
+        type: 'POST',
+        url: 'deleterecording.php',
+        data: {
+            rowid: $(this).parent().prev().attr('title')
+        }
+    });
+    recordings_revision += 1;
+    $(this).parent().prev().remove();
+    $('#modbox').remove();
+    //}
+
+});
+
+//Painetaan record-nappia (joka on enabloitu)
+$('body').on("click", ".recordbutton", function() {
+    $.ajax({
+        type: 'POST',
+        url: 'playvlc.php',
+        data: {
+            yt: 0,
+            path: "record"
+        }
+    });
+
+});
+
+
+function handle_recordings(payload_recordings) {
+if (parseInt(payload_recordings[payload_recordings.length - 1]) != recordings_revision) {
+
+    if (payload_recordings.justone != undefined) {
+
+        if ($('.recording[title="' + payload_recordings.rowid + '"]').length == 0 &&
+            payload_recordings.deleted != 1 && payload_recordings.deleted != "1") {
+
+
+            name = payload_recordings.name;
+            if (payload_recordings.name == null || payload_recordings.name == '1')
+                name = payload_recordings.rowid;
+
+
+            newbutton = $('<button' +
+                ' class="sbutton recording" title="' + payload_recordings.rowid +
+                '" value="sounds\\recorded\\' + (payload_recordings.rowid) + '.wav">' + (name) + '</button>');
+
+            $($("#recordings").children(".recording")[0]).before(newbutton);
+
+        }
+
+        recordings_revision = payload_recordings.revision;
+
+        var rec = $('#recordings[title="' + payload_recordings.rowid + '"]');
+        $(rec).html(payload_recordings.name);
+
+        if (payload_recordings.deleted == 1 || payload_recordings.deleted == "1")
+            $(rec).remove();
+        if (payload_recordings.category != undefined) {
+            $.each($('.rcategory[value="' + payload_recordings.category + '"] .recording'), function(i, element) {
+                if (parseInt($(rec).attr("title")) > parseInt($(element).attr("title"))) {
+                    $(element).before(rec);
+                    return false;
+                }
+            });
+        } else {
+            $.each($('#recordings > .recording'), function(i, element) {
+                if (parseInt($(rec).attr("title")) > parseInt($(element).attr("title"))) {
+                    $(element).before(rec);
+                    return false;
+                }
+            });
+
+        }
+
+
+    } else {
+
+        recordings_revision = parseInt(payload_recordings.pop());
+
+        div_recordings = document.getElementById('recordings'); 
+        div_recordings.innerHTML = '<div id="rcat_1" style="float:left;width:50%;" ></div>'+
+            '<div id="rcat_2" style="float:left;width:50%;" ></div>'+
+            '<br style="clear:both" />';
+
+        biggest = 0;
+        rec_playcounts = [];
+        console.log("line 816: " + (new Date().getTime() - start_time) + "ms");
+
+        cats = {};
+        $.each($('.rcategory'), function() {
+            cats[$(this).attr('value')] = $(this);
+        });
+
+        $.each(payload_recordings.reverse(), function(i, rec) {
+
+
+            rec_playcounts[parseInt(rec.rowid)] = (parseInt(rec.playcount));
+            if (rec.playcount > biggest)
+                biggest = rec.playcount;
+
+            if (rec.category != undefined && rec.category != "null") {
+                if (!(rec.category in cats)) { //$('.rcategory[value="' + rec.category + '"]').length == 0) {
+
+
+                    newdiv = '<div class="rcategory" value="'+rec.category+'" style="'+
+                        "min-height:77;"+
+                        "min-width:100;"+
+                        "border:2px solid;"+
+                        "margin:10px;"+
+                        "padding:5px;"+
+                        '">' + rec.category + '<p></div>';
+                    cats[rec.category] = newdiv;
+
+                }
+            }
+        });
+        console.log("line a: " + (new Date().getTime() - start_time) + "ms");
+        prevdate = "";
+
+
+        var newrecordings = '';
+        tocat = [];
+        $.each(payload_recordings.reverse(), function(i, rec) {
+
+            name = rec.name;
+            if (rec.name == null || rec.name == '1')
+                name = rec.rowid;
+
+
+
+            newbutton = '<button' +
+                ' class="sbutton recording" title="' + rec.rowid +
+                '" value="sounds\\recorded\\' + (rec.rowid) + '.wav">' + (name) + '</button>';
+
+
+
+            if (rec.category != undefined && rec.category != "null") {
+                //$('.rcategory[value="' + rec.category + '"]').append(newbutton);
+                //tocat[rec.category] += newbutton;
+                 cats[rec.category] = cats[rec.category].splice(cats[rec.category].length - 6,0,newbutton);
+            } else {
+                if (rec.date != prevdate) {
+                    //$('#recordings').append("<br>" + rec.date + "<br>");
+                    newrecordings += ("<br>" + rec.date + "<br>");
+                }
+                prevdate = rec.date;
+                //$('#recordings').append(newbutton);
+                newrecordings += newbutton;
+            }
+
+        });
+        var index;
+        $.each(cats,function(i,e){
+            div_recordings.innerHTML = e + div_recordings.innerHTML;
+        })
+        console.log("line b: " + (new Date().getTime() - start_time) + "ms");
+
+        div_recordings.innerHTML += newrecordings;
+
+       console.log("line c: " + (new Date().getTime() - start_time) + "ms"); 
+
+
+        $('.rcategory').each(function() {
+            if ($('#rcat_1 .sbutton').length < $('#rcat_2 .sbutton').length)
+                $('#rcat_1').prepend($(this));
+            else
+                $('#rcat_2').prepend($(this));
+        });
+
+
+
+        console.log("line 896: " + (new Date().getTime() - start_time) + "ms");
+
+
+        console.log("line 919: " + (new Date().getTime() - start_time) + "ms");
+
+
+        updateplaycounts();
+    }
+}
+}/*
+ * ***************************************************************************************
+ * SHOUTBOX
+ * ***************************************************************************************
+ */
+
+function chatmessage() {
+    var val = $('#tts').val();
+    var usr = $('#username').val();
+
+    if (val.length > 0 && val.length < 5000 && val != "Text-to-speech") {
+        postmessage(usr, val, $("#kieli").val(), true);
+
+
+
+        value = addslashes(val);
+
+        var edellinen;
+        edellinen = ma.indexOf(value);
+
+        while (edellinen != -1) {
+            ma.splice(edellinen, 1);
+            edellinen = ma.indexOf(value);
+        }
+        if (ma[ma.length - 1] != value)
+            ma.push(value);
+        if (ma.length > 30)
+            ma.splice(0, 1);
+        shoutbox_counter = ma.length;
+
+        $.cookie("sentmessages", JSON.stringify(ma), {
+            expires: 10
+        });
+
+        $("#tts").val('');
+    }
+
+}
+
+//Kun painetaan viestikent‰ss‰ enter tai ylˆsalas
+$("body").on('keydown', '#tts', function(a) {
+    if (a.keyCode == 40) {
+        if (shoutbox_counter < (ma.length - 1)) {
+            shoutbox_counter += 1;
+            $('#tts').val(ma[shoutbox_counter]);
+        } else {
+            shoutbox_counter = ma.length;
+            $('#tts').val("");
+        }
+    }
+    if (a.keyCode == 38) {
+        if (shoutbox_counter > 0)
+            shoutbox_counter -= 1;
+        $('#tts').val(ma[shoutbox_counter]);
+    }
+    if (a.keyCode == 13 && $(this).val() != "") {
+
+        chatmessage();
+
+
+    }
+
+});
+
+
+//Klikataan sendmsg nappia
+$("body").on('click', "#sendmsg", function() {
+    chatmessage();
+});
+
+//Lis‰t‰‰n emoticon
+$("body").on('click', "#addemoticon", function() {
+
+    var s = $("#addemoticon_sana").val();
+    var l = $("#addemoticon_linkki").val();
+    console.log("l = " + l);
+    console.log("s = " + s);
+    $.ajax({
+        type: 'post',
+        url: 'emoticonssc.php',
+        data: {
+            dothis: 0,
+            sana: s,
+            linkki: l
+        }
+    });
+
+});
+
+//Lis‰‰ viestej‰
+$("body").on('click', '#moreshouts', function() {
+    var rowcount = $('#shoutbox table tbody tr').length;
+    $.ajax({
+        type: 'GET',
+        url: 'getshouts.php',
+        data: {
+            dothis: 'getshouts',
+            kohta: rowcount,
+            rowcount: 0
+        },
+        success: function(data) {
+            $('#shoutbox table tbody tr:last-child').after(data);
+        }
+    });
+});
+/* 
+ * ***************************************************************************************
+ * SIDEBAR
+ * ***************************************************************************************
+ */
+
+
+//Youtube-linkki-alue enterpainallus
+$("body").on('keypress', '.youtube', function(e) {
+    if (e.keyCode == 13) {
+        var v = $(this).val();
+        v = v.replace("https", "http");
+        console.log(v);
+        var $path = {
+            yt: 1,
+            path: v
+        };
+        $(this).val("");
+        $.ajax({
+            type: 'POST',
+            url: 'playvlc.php',
+            data: $path,
+            success: function(data) {
+                console.log(data);
+            }
+        });
+    }
+});
+
+
+//Klikataan killpid
+$("body").on('click', '.killpid', function() {
+    $.ajax({
+        type: 'GET',
+        url: 'stopprocess.php',
+        data: {
+            pid: $(this).attr("title")
+        }
+    });
+
+});
+
+//Klikataan stop youtube -nappia
+$("body").on('click', '.stop_youtube', function() {
+    $.ajax({
+        type: 'POST',
+        url: 'playvlc.php',
+        data: {
+            yt: 0,
+            path: "stopyoutube"
+        }
+    });
+
+});
+
+//Klikataan stop music-nappia
+$("body").on("click", ".stop", function() {
+    $.ajax({
+        type: 'POST',
+        url: 'playvlc.php',
+        data: {
+            yt: 0,
+            path: "stop"
+        }
+    });
+
+});
+
+
+//ts_chatin enterpainallus
+$("body").on("keypress", "#ytchat_input", function(e) {
+    if (e.keyCode == 13 && $('#ytchat_input').val() != "") {
+        msg = $('#ytchat_input').val();
+
+
+
+        $.ajax({
+            type: 'POST',
+            url: '/dev/teamspeak/tschatmessage.php',
+            data: {
+                user: $('#username').val(),
+                msg: msg
+            },
+            success: function(msg) {
+                console.log('tschatmessage.php: ');
+                console.log(msg);
+            }
+        });
+        $('#ytchat_input').val('');
+    }
+});
+
+
+
+//click youtubehide
+$('body').on("click", "#hideyoutube", function() {
+    if ($("#youtube").length == 1) {
+        $('#youtube').remove();
+        $.removeCookie('yt_open');
+    } else {
+        $(this).after('<div id="youtube"></div>');
+        $.cookie("yt_open", true, {
+            expires: 10
+        });
+        youtube_rowid = 0;
+        longPoll(true);
+    }
+});
+
+//click youtube enlarge
+$('body').on("click", "#enlargeyoutube", function() {
+    if ($("#youtube").css('position') == "absolute") {
+        $('#youtube').css('position', 'static');
+        $('#youtube').css('z-index', 0);
+        $('#youtube').css('width', '');
+        $('#youtube').css('height', '');
+
+    } else {
+        $('#youtube').css('height', '480px');
+        $('#youtube').css('position', 'absolute');
+        $('#youtube').css('z-index', 1);
+        $('#youtube').css('width', '854px');
+    }
+});
 
 Ôªø
 

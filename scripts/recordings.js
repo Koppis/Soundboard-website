@@ -196,3 +196,158 @@ $('body').on("click", ".recordbutton", function() {
     });
 
 });
+
+
+function handle_recordings(payload_recordings) {
+if (parseInt(payload_recordings[payload_recordings.length - 1]) != recordings_revision) {
+
+    if (payload_recordings.justone != undefined) {
+
+        if ($('.recording[title="' + payload_recordings.rowid + '"]').length == 0 &&
+            payload_recordings.deleted != 1 && payload_recordings.deleted != "1") {
+
+
+            name = payload_recordings.name;
+            if (payload_recordings.name == null || payload_recordings.name == '1')
+                name = payload_recordings.rowid;
+
+
+            newbutton = $('<button' +
+                ' class="sbutton recording" title="' + payload_recordings.rowid +
+                '" value="sounds\\recorded\\' + (payload_recordings.rowid) + '.wav">' + (name) + '</button>');
+
+            $($("#recordings").children(".recording")[0]).before(newbutton);
+
+        }
+
+        recordings_revision = payload_recordings.revision;
+
+        var rec = $('#recordings[title="' + payload_recordings.rowid + '"]');
+        $(rec).html(payload_recordings.name);
+
+        if (payload_recordings.deleted == 1 || payload_recordings.deleted == "1")
+            $(rec).remove();
+        if (payload_recordings.category != undefined) {
+            $.each($('.rcategory[value="' + payload_recordings.category + '"] .recording'), function(i, element) {
+                if (parseInt($(rec).attr("title")) > parseInt($(element).attr("title"))) {
+                    $(element).before(rec);
+                    return false;
+                }
+            });
+        } else {
+            $.each($('#recordings > .recording'), function(i, element) {
+                if (parseInt($(rec).attr("title")) > parseInt($(element).attr("title"))) {
+                    $(element).before(rec);
+                    return false;
+                }
+            });
+
+        }
+
+
+    } else {
+
+        recordings_revision = parseInt(payload_recordings.pop());
+
+        div_recordings = document.getElementById('recordings'); 
+        div_recordings.innerHTML = '<div id="rcat_1" style="float:left;width:50%;" ></div>'+
+            '<div id="rcat_2" style="float:left;width:50%;" ></div>'+
+            '<br style="clear:both" />';
+
+        biggest = 0;
+        rec_playcounts = [];
+        console.log("line 816: " + (new Date().getTime() - start_time) + "ms");
+
+        cats = {};
+        $.each($('.rcategory'), function() {
+            cats[$(this).attr('value')] = $(this);
+        });
+
+        $.each(payload_recordings.reverse(), function(i, rec) {
+
+
+            rec_playcounts[parseInt(rec.rowid)] = (parseInt(rec.playcount));
+            if (rec.playcount > biggest)
+                biggest = rec.playcount;
+
+            if (rec.category != undefined && rec.category != "null") {
+                if (!(rec.category in cats)) { //$('.rcategory[value="' + rec.category + '"]').length == 0) {
+
+
+                    newdiv = '<div class="rcategory" value="'+rec.category+'" style="'+
+                        "min-height:77;"+
+                        "min-width:100;"+
+                        "border:2px solid;"+
+                        "margin:10px;"+
+                        "padding:5px;"+
+                        '">' + rec.category + '<p></div>';
+                    cats[rec.category] = newdiv;
+
+                }
+            }
+        });
+        console.log("line a: " + (new Date().getTime() - start_time) + "ms");
+        prevdate = "";
+
+
+        var newrecordings = '';
+        tocat = [];
+        $.each(payload_recordings.reverse(), function(i, rec) {
+
+            name = rec.name;
+            if (rec.name == null || rec.name == '1')
+                name = rec.rowid;
+
+
+
+            newbutton = '<button' +
+                ' class="sbutton recording" title="' + rec.rowid +
+                '" value="sounds\\recorded\\' + (rec.rowid) + '.wav">' + (name) + '</button>';
+
+
+
+            if (rec.category != undefined && rec.category != "null") {
+                //$('.rcategory[value="' + rec.category + '"]').append(newbutton);
+                //tocat[rec.category] += newbutton;
+                 cats[rec.category] = cats[rec.category].splice(cats[rec.category].length - 6,0,newbutton);
+            } else {
+                if (rec.date != prevdate) {
+                    //$('#recordings').append("<br>" + rec.date + "<br>");
+                    newrecordings += ("<br>" + rec.date + "<br>");
+                }
+                prevdate = rec.date;
+                //$('#recordings').append(newbutton);
+                newrecordings += newbutton;
+            }
+
+        });
+        var index;
+        $.each(cats,function(i,e){
+            div_recordings.innerHTML = e + div_recordings.innerHTML;
+        })
+        console.log("line b: " + (new Date().getTime() - start_time) + "ms");
+
+        div_recordings.innerHTML += newrecordings;
+
+       console.log("line c: " + (new Date().getTime() - start_time) + "ms"); 
+
+
+        $('.rcategory').each(function() {
+            if ($('#rcat_1 .sbutton').length < $('#rcat_2 .sbutton').length)
+                $('#rcat_1').prepend($(this));
+            else
+                $('#rcat_2').prepend($(this));
+        });
+
+
+
+        console.log("line 896: " + (new Date().getTime() - start_time) + "ms");
+
+
+        console.log("line 919: " + (new Date().getTime() - start_time) + "ms");
+
+
+        updateplaycounts();
+    }
+}
+}
