@@ -1461,7 +1461,7 @@ function enablejukebox() {
 /* 
  * VITSIT
  */
-//Lis‰t‰‰n vitsi
+//Lis√§t√§√§n vitsi
 $("body").on('keypress', '#addjoke', function(e) {
     if (e.keyCode == 13) {
         var v = $(this).val();
