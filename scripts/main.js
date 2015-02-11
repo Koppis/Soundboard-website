@@ -115,6 +115,11 @@ $('body').on("click", ".hidecat", function() {
 
 //Toista ääni
 $('body').on("click", ".sbutton", function() {
+    if (document.getElementById("play_through_web").checked == true){
+console.log('pressed sbutton ' + $(this).val());
+    var audio = new Audio('/' + $(this).val());
+    audio.play();
+}else
     if (!$(this).is(":disabled")) {
 
         $.ajax({
@@ -133,19 +138,6 @@ $('body').on("click", ".sbutton", function() {
 
 
 
-
-function vitstirating_handler(score){
-        vitsi = $(this).prev().attr('title');
-            $.ajax({
-                url:'ratememe.php',
-                type:'POST',
-                data:{rating:score*2,
-                    user:session,
-                    vitsi:vitsi},
-                success:function(data){
-                console.log(data);
-                }})
-    }
 
 
 

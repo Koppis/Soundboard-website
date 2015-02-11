@@ -39,7 +39,8 @@
             <td style="word-break:break-word;" rowspan="1" valign="top" bgcolor="#FAFAFA">
 				<button class="stop">Stop music</button>
 				<button class="stop_youtube">Stop youtube</button>
-				<a href="game/index.html">Peli</a>
+                <a href="game/index.html">Peli</a><br>
+                <input id="play_through_web" type="checkbox">Music through website</input>
 				<p><input type="text" style="width:10em" class="textarea youtube"
 						alt="Youtube-linkki" value="Youtube-linkki">
 				
@@ -133,6 +134,7 @@
 			<button class="sbutton" value="sounds\Music\mememon.mp3">Mememon</button>
 			<button class="sbutton" value="sounds\Music\Mmph the Way You Mmph.mp3">Mmph the Way You Mmph</button>
 			<button class="sbutton" value="sounds\Music\Moskau.mp3">Moskau</button>
+			<button class="sbutton" value="sounds\Music\memeja.mp3">Memejä</button>
 			<button class="sbutton" value="sounds\Music\My Heart Will Go On.mp3">My Heart Will Go On</button>
 			<button class="sbutton" value="sounds\Music\My_Horse_is_Amazing.mp3">My_Horse_is_Amazing</button>
 			<button class="sbutton" value="sounds\Music\Oh my dauym.mp3">Oh my dauym</button>

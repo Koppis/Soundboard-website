@@ -101,35 +101,6 @@ $('body').on("contextmenu", ".recording", function() {
     return false;
 });
 
-function memerate_handler(rating, evt) {
-
-    if (isNaN(parseInt(rating))) rating = 0;
-    
-    console.log("rec : "+$(this).prev().attr('title'));
-    console.log("rating : "+(parseInt(rating)*2));
-    console.log("myrating : "+(parseInt($(this).attr("data-myscore"))));
-
-    if (rating == (parseInt($(this).attr("data-myscore")))) return;
-    
-    $.ajax({
-    type: 'POST',
-    url: 'ratememe.php',
-    data: {
-    rec:$(this).parent().attr('rec'),
-    rating: (parseInt(rating)*2),
-    user:session
-    },
-    success: function(data) {
-    console.log(data);
-    },
-    error: function(data) {
-    console.log(data);
-    }
-
-
-    });
-}
-
 //Modifying a recording
 var modify_recording = function(element) {
     e_parent = $(element).parent().prev();

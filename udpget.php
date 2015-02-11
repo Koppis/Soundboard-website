@@ -53,10 +53,14 @@ while (true) {
     if ($buf == "rs") {
     	$db->exec("UPDATE record SET status=1");
         
-    } elseif ($buf == "rd") {
+    } elseif (substr($buf,0,2) == "rd") {
     	$db->exec("UPDATE record SET status=0");
-    	$db->exec("INSERT INTO recordings (date) VALUES (date())");
-        
+        if (strlen($buf) > 2){ 
+            $name = substr($buf,2);
+            $db->exec("INSERT INTO recordings (date,name) VALUES (date(),'$name')");
+        }else{
+            $db->exec("INSERT INTO recordings (date) VALUES (date())");
+        }
         $rowid = $db->query("SELECT rowid FROM recordings ORDER BY rowid DESC LIMIT 1")[0]['rowid'];
         $db->exec("UPDATE changes SET revision = revision + 1, id = $rowid WHERE name = 'recordings'");
     } elseif (substr($buf,0,5) == "start") {

@@ -85,13 +85,13 @@ if ($rating == 10 || $count == 1) {
 }
 }
 
-if ($rating == 0){
+if ($rating <= 2){
     $db->exec("DELETE FROM memes WHERE $kumpi = $rec");
     $db->exec("UPDATE memes SET rating = rating + 1 WHERE rowid = 1");
 } else {
     if (($db->exec("UPDATE memes SET rating = $rating WHERE $kumpi = $rec" )) == 0)
         $db->exec("INSERT INTO memes ($kumpi,rating) VALUES ($rec,$rating)");
-    $db->exec("UPDATE memes SET rating = rating + 1 WHERE rowid = 1");
+    //$db->exec("UPDATE memes SET rating = rating + 1 WHERE rowid = 1");
 
 }
 

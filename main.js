@@ -375,6 +375,11 @@ $('body').on("click", ".hidecat", function() {
 
 //Toista ääni
 $('body').on("click", ".sbutton", function() {
+    if (document.getElementById("play_through_web").checked == true){
+console.log('pressed sbutton ' + $(this).val());
+    var audio = new Audio('/' + $(this).val());
+    audio.play();
+}else
     if (!$(this).is(":disabled")) {
 
         $.ajax({
@@ -393,19 +398,6 @@ $('body').on("click", ".sbutton", function() {
 
 
 
-
-function vitstirating_handler(score){
-        vitsi = $(this).prev().attr('title');
-            $.ajax({
-                url:'ratememe.php',
-                type:'POST',
-                data:{rating:score*2,
-                    user:session,
-                    vitsi:vitsi},
-                success:function(data){
-                console.log(data);
-                }})
-    }
 
 
 
@@ -736,6 +728,49 @@ function enablejukebox() {
     $('.not_online').hide();
 }
 
+
+
+function memerate_handler(rating, evt) {
+
+    if (isNaN(parseInt(rating))) rating = 0;
+    
+    console.log("rec : "+$(this).prev().attr('title'));
+    console.log("rating : "+(parseInt(rating)*2));
+    console.log("myrating : "+(parseInt($(this).attr("data-myscore"))));
+
+    if (rating == (parseInt($(this).attr("data-myscore")))) return;
+    $(this).prev().css('background-color','');    
+    $.ajax({
+    type: 'POST',
+    url: 'ratememe.php',
+    data: {
+    rec:$(this).parent().attr('rec'),
+    rating: (parseInt(rating)*2),
+    user:session
+    },
+    success: function(data) {
+    console.log(data);
+    },
+    error: function(data) {
+    console.log(data);
+    }
+
+
+    });
+}
+function vitstirating_handler(score){
+        vitsi = $(this).prev().attr('title');
+            $.ajax({
+                url:'ratememe.php',
+                type:'POST',
+                data:{rating:score*2,
+                    user:session,
+                    vitsi:vitsi},
+                success:function(data){
+                console.log(data);
+                }})
+    }
+
 function handle_payload_memes (payload_memes){
     memes_revision = payload_memes.shift().rating;
     payload_memes.sort(function(a,b) {return (b.rating) - parseFloat(a.rating)})
@@ -818,6 +853,7 @@ function handle_payload_memes (payload_memes){
         })
     }*/
 }
+
 /* 
  * ***************************************************************************************
  * RECORDINGS
@@ -919,35 +955,6 @@ $('body').on("contextmenu", ".recording", function() {
             }
     return false;
 });
-
-function memerate_handler(rating, evt) {
-
-    if (isNaN(parseInt(rating))) rating = 0;
-    
-    console.log("rec : "+$(this).prev().attr('title'));
-    console.log("rating : "+(parseInt(rating)*2));
-    console.log("myrating : "+(parseInt($(this).attr("data-myscore"))));
-
-    if (rating == (parseInt($(this).attr("data-myscore")))) return;
-    
-    $.ajax({
-    type: 'POST',
-    url: 'ratememe.php',
-    data: {
-    rec:$(this).parent().attr('rec'),
-    rating: (parseInt(rating)*2),
-    user:session
-    },
-    success: function(data) {
-    console.log(data);
-    },
-    error: function(data) {
-    console.log(data);
-    }
-
-
-    });
-}
 
 //Modifying a recording
 var modify_recording = function(element) {
@@ -1169,7 +1176,8 @@ if (parseInt(payload_recordings[payload_recordings.length - 1]) != recordings_re
         updateplaycounts();
     }
 }
-}/*
+}
+/*
  * ***************************************************************************************
  * SHOUTBOX
  * ***************************************************************************************
