@@ -4,7 +4,36 @@
  * SIDEBAR
  * ***************************************************************************************
  */
+function handle_payload_youtube(payload_youtube) {
+    if ($('#youtube').length != 0) {
+        id = "";
+        arr = payload_youtube.link.match("(?:[\?&]v=|be\/)([^&#]*)");
+        if (arr != null) {
+            if (arr.length > 1)
+                id = arr[1];
 
+            rand = Math.random();
+
+            $('#youtube').html('');
+            $('#youtube').html('<a href="' + payload_youtube.link + '">' +
+                payload_youtube.name + '</a>' +
+                '<iframe id="' + rand + '" type="text/html" width="100%" height="100%"' +
+                ' src="http://www.youtube.com/embed/' + id + '?enablejsapi=1&autohide=1&showinfo=0" frameborder="0"/>'
+            );
+            if (youtube_rowid != 0) {
+                console.log(youtube_rowid);
+                callPlayer(rand, function() {
+                    // This function runs once the player is ready ("onYouTubePlayerReady")
+                    setTimeout(function() {
+                        callPlayer(rand, "playVideo");
+                        callPlayer(rand, "mute");
+                    },1500);
+                });
+            }
+        }
+    }
+    youtube_rowid = payload_youtube.rowid;
+}
  handle_youtube_link = function() {
     var v = $('.youtube').val();
     v = v.replace("https", "http");
