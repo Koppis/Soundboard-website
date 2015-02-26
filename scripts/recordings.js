@@ -318,7 +318,7 @@ if (parseInt(payload_recordings[payload_recordings.length - 1]) != recordings_re
         console.log("line 919: " + (new Date().getTime() - start_time) + "ms");
 
 
-        updateplaycounts();
+        //updateplaycounts();
     }
 }
 }
