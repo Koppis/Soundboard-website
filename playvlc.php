@@ -41,7 +41,7 @@ if (substr($msg,7,8) == "recorded") {
 	$db->exec("INSERT INTO youtube (link,name) VALUES ('{$msg}','{$vidtitle}')");
 	$db = NULL;
     
-    $msg .= '&hd=1';
+    #$msg .= '&hd=1';
     
 }
 

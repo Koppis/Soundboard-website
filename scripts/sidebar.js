@@ -5,28 +5,34 @@
  * ***************************************************************************************
  */
 
+ handle_youtube_link = function() {
+    var v = $('.youtube').val();
+    v = v.replace("https", "http");
+    console.log(v);
+    var $path = {
+        yt: 1,
+        path: v
+    };
+    $('.youtube').val("");
+    $.ajax({
+        type: 'POST',
+        url: 'playvlc.php',
+        data: $path,
+        success: function(data) {
+            console.log(data);
+        }
+    });
+ }
 
 //Youtube-linkki-alue enterpainallus
 $("body").on('keypress', '.youtube', function(e) {
     if (e.keyCode == 13) {
-        var v = $(this).val();
-        v = v.replace("https", "http");
-        console.log(v);
-        var $path = {
-            yt: 1,
-            path: v
-        };
-        $(this).val("");
-        $.ajax({
-            type: 'POST',
-            url: 'playvlc.php',
-            data: $path,
-            success: function(data) {
-                console.log(data);
-            }
-        });
+        handle_youtube_link();
     }
 });
+
+//Youtube-linkki-alue click
+$("body").on('click', '.youtube_submit', handle_youtube_link);
 
 
 //Klikataan killpid

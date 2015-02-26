@@ -123,24 +123,26 @@ function longPoll(loop) {
                         if ($('#youtube').length != 0) {
                             id = "";
                             arr = payload.youtube.link.match("(?:[\?&]v=|be\/)([^&#]*)");
-                            if (arr.length > 1)
-                                id = arr[1];
+                            if (arr != null) {
+                                if (arr.length > 1)
+                                    id = arr[1];
 
-                            rand = Math.random();
+                                rand = Math.random();
 
-                            $('#youtube').html('');
-                            $('#youtube').html('<a href="' + payload.youtube.link + '">' +
-                                payload.youtube.name + '</a>' +
-                                '<iframe id="' + rand + '" type="text/html" width="100%" height="100%"' +
-                                ' src="http://www.youtube.com/embed/' + id + '?enablejsapi=1&autohide=1&showinfo=0" frameborder="0"/>'
-                            );
-                            if (youtube_rowid != 0) {
-                                console.log(youtube_rowid);
-                                callPlayer(rand, function() {
-                                    // This function runs once the player is ready ("onYouTubePlayerReady")
-                                    callPlayer(rand, "playVideo");
-                                    callPlayer(rand, "mute");
-                                });
+                                $('#youtube').html('');
+                                $('#youtube').html('<a href="' + payload.youtube.link + '">' +
+                                    payload.youtube.name + '</a>' +
+                                    '<iframe id="' + rand + '" type="text/html" width="100%" height="100%"' +
+                                    ' src="http://www.youtube.com/embed/' + id + '?enablejsapi=1&autohide=1&showinfo=0" frameborder="0"/>'
+                                );
+                                if (youtube_rowid != 0) {
+                                    console.log(youtube_rowid);
+                                    callPlayer(rand, function() {
+                                        // This function runs once the player is ready ("onYouTubePlayerReady")
+                                        callPlayer(rand, "playVideo");
+                                        callPlayer(rand, "mute");
+                                    });
+                                }
                             }
                         }
 

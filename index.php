@@ -41,8 +41,9 @@
 				<button class="stop_youtube">Stop youtube</button>
                 <a href="game/index.html">Peli</a><br>
                 <input id="play_through_web" type="checkbox">Music through website</input>
-				<p><input type="text" style="width:10em" class="textarea youtube"
+				<p><input type="text" style="word-break: normal;width:10em" class="textarea youtube"
 						alt="Youtube-linkki" value="Youtube-linkki">
+                        <button class="youtube_submit">Submit</button>
 				
 
 					<br>
