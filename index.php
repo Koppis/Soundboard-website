@@ -50,8 +50,8 @@
 					<div id="processes"></div> 
 
 					<div id="tjt"></div>
-                    <button style="padding:2px;min-width:20px;" id="enlargeyoutube">++</button>
-                    <button style="padding:2px;min-width:20px;" id="hideyoutube">-</button>
+                    <button style="padding:2px;min-width:20px;" id="enlargeyoutube">Enlarge</button>
+                    <button style="padding:2px;min-width:20px;" id="hideyoutube">Hide</button>
                     <!--<div id="youtube"></div>-->
                     <br />
                     <div id="teamspeak"></div> 
