@@ -30,7 +30,7 @@ class Memes extends DatabaseCheck {
         
 	public function getdata() {
 		if (isset($this->result)) {
-            $result = $this->db->query("SELECT * FROM memes");
+            $result = $this->db->query("SELECT *,rowid FROM memes");
             $session = $GLOBALS['session_id'];
 
             $data = array();
@@ -45,8 +45,19 @@ class Memes extends DatabaseCheck {
                 else
                     $myrate = NULL;
                 } 
-                
-				$data[] = array('rec'=>$rec,'vitsi'=>$row['vitsi'],'rating'=>$row['rating'],'myrating'=>$myrate);
+                $recname = NULL;
+                $vitsitext = NULL;
+                if ($rec != NULL) {
+                    $r = $this->db->query("SELECT name FROM recordings WHERE rowid = $rec");
+                    $recname = $r[0]['name'];
+			    	$data[] = array('rec'=>$rec,'recname'=>$recname,'rating'=>$row['rating'],'myrating'=>$myrate);
+                } else if ($row['vitsi'] != NULL) {
+                    $r = $this->db->query("SELECT vitsi FROM vitsit WHERE rowid = ".$row['vitsi']);
+                    $vitsitext = $r[0]['vitsi'];
+			    	$data[] = array('vitsi'=>$row['vitsi'],'vitsitext'=>$vitsitext,'rating'=>$row['rating'],'myrating'=>$myrate);
+                } else if ($row['rowid'] == "1") {
+			    	$data[] = array('rec'=>$rec,'rating'=>$row['rating']);
+                }
 			}
             
 			return $data;

@@ -170,10 +170,12 @@ function longPoll(loop) {
                         })
                     }
 
+                            console.log("line i: " + (new Date().getTime() - start_time) + "ms");
                     if (payload.memes != undefined) {
                         handle_payload_memes(payload.memes);
                     }
 
+                            console.log("line j: " + (new Date().getTime() - start_time) + "ms");
 
                     if (payload.cookie != undefined) {
                         cookie_rowid = payload.cookie.rowid;

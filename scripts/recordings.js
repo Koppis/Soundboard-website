@@ -298,7 +298,7 @@ if (parseInt(payload_recordings[payload_recordings.length - 1]) != recordings_re
         })
         console.log("line b: " + (new Date().getTime() - start_time) + "ms");
 
-        div_recordings.innerHTML += newrecordings;
+        $(div_recordings).html($(div_recordings).html() + newrecordings);
 
        console.log("line c: " + (new Date().getTime() - start_time) + "ms"); 
 

@@ -26,7 +26,7 @@
 
 </head>
 
-<body style="margin: 0px; padding: 0px; display:default;">
+<body style="margin: 0px; padding: 0px; display:none;">
 
     <table id="pagelayout" style="height: 100%;width: 100%;" 
 	cellpadding="3" cellspacing="0" border="0">

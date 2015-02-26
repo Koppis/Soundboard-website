@@ -227,10 +227,12 @@ function handle_payload_emoticons(payload_emoticons) {
                         })
                     }
 
+                            console.log("line i: " + (new Date().getTime() - start_time) + "ms");
                     if (payload.memes != undefined) {
                         handle_payload_memes(payload.memes);
                     }
 
+                            console.log("line j: " + (new Date().getTime() - start_time) + "ms");
 
                     if (payload.cookie != undefined) {
                         cookie_rowid = payload.cookie.rowid;
@@ -260,7 +262,8 @@ function handle_payload_emoticons(payload_emoticons) {
         }
 
     });
-}﻿
+}
+﻿
 
 //init
 var version = 12;
@@ -741,7 +744,7 @@ function memerate_handler(rating, evt) {
     console.log("myrating : "+(parseInt($(this).attr("data-myscore"))));
 
     if (rating == (parseInt($(this).attr("data-myscore")))) return;
-    $(this).prev().css('background-color','');    
+    $(this).css('background-color','');    
     $.ajax({
     type: 'POST',
     url: 'ratememe.php',
@@ -780,22 +783,22 @@ function handle_payload_memes (payload_memes){
         newmemes = "";
         $.each(payload_memes, function (i,e) {
             if (e.rec != null) {
-                b = $('.recording[title='+e.rec+']').first();
+                //b = $('.recording[title='+e.rec+']').first();
                 style = (e.myrating == null ? 'style="background-color:#FF0000;"' : "");
                 meme = '<div style="display:inline-block;margin:10px" rec="'+e.rec+
-                '"><button class="sbutton" '+style+' title="'+e.rec+'" value="'+b.val()+'">'+
-                b.html()+'</button>'+(e.myrating != null ? e.myrating/2 : "")+
+                '"><button class="sbutton" '+style+' title="'+e.rec+'" value="sounds\\recorded\\' + e.rec + '.wav">'+
+                e.recname+'</button>'+(e.myrating != null ? e.myrating/2 : "")+
                 '<div data-myscore="'+(e.myrating != null ? e.myrating/2 : -1)+
                 '" class="memerating" data-score="'+(e.rating/2)+'"></div></div>';
             } else if (e.vitsi != null) {
-                v = $('#vitsit li[data-rowid='+e.vitsi+']').first();
+                /*v = $('#vitsit li[data-rowid='+e.vitsi+']').first();
                 teksti = v.contents().filter(function(){ 
                       return this.nodeType == 3; 
                     })[0].nodeValue
-                
+               */ 
                 meme = '<div style="display:inline-block;margin:10px" vitsi="'+e.vitsi+
-                '"><button class="sbutton"  title="'+e.vitsi+'" value="vitsi'+teksti+'">'+
-                teksti+'</button>'+(e.myrating != null ? e.myrating/2 : "")+
+                '"><button class="sbutton"  title="'+e.vitsi+'" value="vitsi'+e.vitsitext+'">'+
+                e.vitsitext+'</button>'+(e.myrating != null ? e.myrating/2 : "")+
                 '<div data-myscore="'+(e.myrating != null ? e.myrating/2 : -1)+
                 '" class="vitsi_memerating" data-score="'+(e.rating/2)+'"></div></div>';
                 
@@ -1155,7 +1158,7 @@ if (parseInt(payload_recordings[payload_recordings.length - 1]) != recordings_re
         })
         console.log("line b: " + (new Date().getTime() - start_time) + "ms");
 
-        div_recordings.innerHTML += newrecordings;
+        $(div_recordings).html($(div_recordings).html() + newrecordings);
 
        console.log("line c: " + (new Date().getTime() - start_time) + "ms"); 
 
