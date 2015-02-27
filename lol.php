@@ -55,7 +55,13 @@ foreach($GLOBALS["ts3"]->clientList() as $ts3_client)
     $date = date('Y-m-d H:i:s');
 
     echo "Nickname: ".$clientinfo['client_nickname'].PHP_EOL;
-    $s = $summoner->info($nickname); 
+    $searchname = $nickname;
+    switch ($nickname) {
+    case "Super":
+        $searchname = "Twitch chat";
+        break;
+    }
+    $s = $summoner->info($searchname); 
     try {
         echo "League name: ".$s->name."\n";
         $id = $s->id;
