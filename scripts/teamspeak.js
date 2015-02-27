@@ -17,7 +17,8 @@ function handle_payload_teamspeak(payload_teamspeak) {
     });
     $.each(payload_teamspeak, function(i, a) {
         if (a.type == 0 && a.online == 1) {
-            var clienticon = $('<li style="list-style-type: none;" class="ts_client" value="' + a.id + '">' + a.name + '</li>');
+            var clienticon = $('<li style="list-style-type: none;" class="ts_client" value="' + a.id + '">' + a.name + 
+                (a.lolchamp != null ? " - <img src='/images/lol/champion/"+a.lolchamp+".png' />":"") + '</li>');
             $(newlist).find('li[value="' + a.channel + '"]').children('ul').prepend(clienticon);
             switch (a.mode) {
                 case 0:

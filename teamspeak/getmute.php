@@ -1,10 +1,7 @@
 <?php
-
-
 // load framework files
 require_once("libraries/TeamSpeak3/TeamSpeak3.php");
 require_once("../myDatabase.php");
-
 while (1) {
 
 echo PHP_EOL."Main loop starting!".PHP_EOL;
@@ -55,11 +52,12 @@ foreach($GLOBALS["ts3"]->clientList() as $ts3_client)
     #echo "away: ".$clientinfo['client_away'].PHP_EOL;
     #echo "cldbid: ".$clientinfo['client_database_id'].PHP_EOL;
 
-    $ret = $db->exec("UPDATE OR IGNORE teamspeak_clients SET mode = $mode, name='$nickname' WHERE id = $cldbid AND (mode IS NOT $mode OR name IS NOT '$nickname') ");
+$ret = $db->exec("UPDATE OR IGNORE teamspeak_clients SET mode = $mode, name='$nickname' WHERE id = $cldbid AND (mode IS NOT $mode OR name IS NOT '$nickname') ");
     
     if ($ret == 1) {
     $date = date('Y-m-d H:i:s');
     echo PHP_EOL.$date  . PHP_EOL;
+
 
     echo "Nickname: ".$clientinfo['client_nickname'].PHP_EOL;
     echo "Speakers muted: ".$clientinfo['client_output_muted'].PHP_EOL;
@@ -73,7 +71,7 @@ foreach($GLOBALS["ts3"]->clientList() as $ts3_client)
 
 }
 
-usleep(500000);
+usleep(2500000);
 }
 
 } catch (Exception $e) {
