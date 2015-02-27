@@ -23,7 +23,7 @@ $api->attachStaticData();
 
 
 
-
+while (1) {
 
 echo PHP_EOL."Main loop starting!".PHP_EOL;
 
@@ -37,7 +37,7 @@ $GLOBALS["ts3"] = TeamSpeak3::factory("serverquery://koppislandia:xg1rR+Ni@127.0
 
 $db = new myDatabase();
 
-
+try{
 while (1) {
 $GLOBALS["ts3"]->clientListReset();
 $nicks = array();
@@ -68,7 +68,7 @@ foreach($GLOBALS["ts3"]->clientList() as $ts3_client)
         $game = $currentGame->currentGame($s);
         $participant = $game->participant($id);
         $champion = $api->champion()->championById($participant->championId);
-        $champname = $champion->championStaticData->name;
+        $champname = str_replace("'","",$champion->championStaticData->name);
         echo "name: " . $champname . "\n";
         $r = $db->query("SELECT lolchamp FROM teamspeak_clients WHERE name = '$nickname'");
         if ($r[0]['lolchamp'] != $champname) {
@@ -89,4 +89,12 @@ echo "\n";
 usleep(10000000);
 }
 
-$db = NULL;
+} catch (Exception $e) {
+    $date = date('Y-m-d H:i:s');
+
+    echo $date.' Caught exception: ',  $e->getMessage(), "\n";   
+
+    $db = NULL;
+    
+    continue;
+}}
