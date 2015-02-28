@@ -60,6 +60,9 @@ foreach($GLOBALS["ts3"]->clientList() as $ts3_client)
     case "Super":
         $searchname = "Twitch chat";
         break;
+    case "omena":
+        $searchname = "Happy Omena";
+        break;
     }
     $s = $summoner->info($searchname); 
     try {
@@ -98,3 +101,13 @@ usleep(10000000);
     
     continue;
 }}
+
+function sendmsg($msg) {
+    $msg = utf8_decode($msg);
+    $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+    socket_sendto($socket, $msg, strlen($msg), 0, "91.156.255.202", 1124);
+    socket_sendto($socket, $msg, strlen($msg), 0, "91.156.255.202", 1125);
+    socket_sendto($socket, $msg, strlen($msg), 0, "91.156.255.202", 1126);
+    socket_sendto($socket, $msg, strlen($msg), 0, "91.156.255.202", 1127);
+    socket_close($socket);
+} 

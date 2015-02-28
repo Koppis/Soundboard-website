@@ -440,12 +440,12 @@ $(document).ready(function() {
     if ($.cookie("usercolor") != undefined)
         $('#usercolor').val($.cookie("usercolor"));
 
-    if ($.cookie("session") != undefined)
+    if ($.cookie("session") != undefined){
         session = $.cookie("session");
         $.cookie("session", session, {
             expires: 100
         });
-    else {
+}   else {
         session = $.now().toString() + $('#username').val();
         $.cookie("session", session, {
             expires: 100
