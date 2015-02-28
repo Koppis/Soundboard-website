@@ -224,7 +224,7 @@ function onClientconnect(TeamSpeak3_Adapter_ServerQuery_Event $event, TeamSpeak3
     
     if (!(strpos($nickname, 'from 127.0.0.1') !== FALSE)) {
     
-    $GLOBALS["db"]->exec("INSERT OR IGNORE INTO teamspeak_clients (id,name,channel,online,clid) VALUES ($cldbid,'$nickname',1,1,$clid)");
+    $GLOBALS["db"]->exec("INSERT OR IGNORE INTO teamspeak_clients (id,name,channel,online,clid) VALUES ($cldbid,'$nickname',$ctid,1,$clid)");
 
     
     $GLOBALS["db"]->exec("UPDATE teamspeak_changes SET id = id + 1");
