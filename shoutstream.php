@@ -133,7 +133,7 @@ class Teamspeak extends Databasecheck {
 
             foreach ($result as $row) {
                 $data [] = array('type'=>0, 'id' => intval($row['id']), 'name'=> $row['name'], 'channel'=>intval($row['channel']),
-                    'online'=>1, 'mode'=>intval($row['mode']), 'lolchamp'=>$row['lolchamp'], 'summonerid'=>$row['summonerid']);
+                    'online'=>1, 'mode'=>intval($row['mode']), 'lolchamp'=>$row['champ'], 'summonerid'=>$row['summonerid']);
             }
 
             $data[] = intval($this->result[0]['id']);
