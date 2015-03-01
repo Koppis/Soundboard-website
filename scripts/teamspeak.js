@@ -35,7 +35,7 @@ function handle_payload_teamspeak(payload_teamspeak) {
             else
                 nickname = '<a target="_blank" href="http://www.elophant.com/league-of-legends/summoner/eune/'+a.summonerid+'/recent-games">'+a.name+'</a>';
             var clienticon = $('<li style="list-style-type: none;" class="ts_client" value="' + a.id + '">' + nickname + 
-                (a.lolchamp != null ? " - <a href='http://www.lolnexus.com/EUNE/search?name="+lolname+"&server=EUNE'><img  src='/images/lol/champion/"+a.lolchamp+".png' /></a>":"") + '</li>');
+                (a.lolchamp != null ? " - <a href='http://www.lolnexus.com/EUNE/search?name="+lolname+"&server=EUNE' target='_blank'><img  src='/images/lol/champion/"+a.lolchamp+".png' /></a>":"") + '</li>');
             $(newlist).find('li[value="' + a.channel + '"]').children('ul').prepend(clienticon);
             switch (a.mode) {
                 case 0:
