@@ -18,6 +18,7 @@ $api->limit(10, 10);    // Set a limit of 10 requests per 10 seconds
 $api->limit(500, 600);  // Set a limit of 500 requests per 600 (10 minutes) seconds
 $summoner = $api->summoner();          // Load up the summoner request object.
 $currentGame = $api->currentGame();
+$api_champions = $api->champion()->all();
 $api->attachStaticData(); 
 $api_game = $api->game();
 
@@ -41,6 +42,9 @@ foreach ($tsclients as $row) {
         case "Super":
             $searchname = "Twitch chat";
             break;
+        case "Koppis":
+            $searchname = "Koppis1337";
+            break;
         case "omena":
             $searchname = "Happy Omena";
             break;
@@ -58,7 +62,7 @@ foreach ($tsclients as $row) {
         $games = @$api_game->recent($id);
         $recentgame  = $games[0]->stats;
         $lastgameid = $games[0]->gameId;
-        $champion = $api->champion()->championById($games[0]->championId);
+        $champion = $api_champions->getChampion($games[0]->championId);
         $champname = str_replace("'","",$champion->championStaticData->name);
         echo "db lastgameid: ".$r[0]['lastgameid']." last gameid: ".$lastgameid."\n";
         //print_r( $recentgame);
@@ -88,7 +92,7 @@ foreach ($tsclients as $row) {
         $game = $currentGame->currentGame($id);
         $participant = $game->participant($id);
         $gameid = $game->gameId;
-        $champion = $api->champion()->championById($participant->championId);
+        $champion = $api_chmpions->getChampion($participant->championId);
         $champname = str_replace(" ","",str_replace("'","",$champion->championStaticData->name));
         echo "name: " . $champname . "\n";
 

@@ -21,7 +21,7 @@ function handle_payload_teamspeak(payload_teamspeak) {
             if (a.summonerid == null)
                 nickname = a.name;
             else
-                nickname = '<a href="http://www.elophant.com/league-of-legends/summoner/eune/'+a.summonerid+'/recent-games">'+a.name+'</a>';
+                nickname = '<a target="_blank" href="http://www.elophant.com/league-of-legends/summoner/eune/'+a.summonerid+'/recent-games">'+a.name+'</a>';
             var clienticon = $('<li style="list-style-type: none;" class="ts_client" value="' + a.id + '">' + nickname + 
                 (a.lolchamp != null ? " - <img src='/images/lol/champion/"+a.lolchamp+".png' />":"") + '</li>');
             $(newlist).find('li[value="' + a.channel + '"]').children('ul').prepend(clienticon);
@@ -58,7 +58,7 @@ function handle_payload_teamspeakchat(payload_teamspeakchat){
         msg = e.msg;
 
         if ((e.msg).search(/\[URL\](.*)\[\/URL\]/g) != -1) {
-            msg = msg.replace(/\[URL\]/g, '<a href="');
+            msg = msg.replace(/\[URL\]/g, '<a target="_blank" href="');
             msg = msg.replace(/\[\/URL\]/g, '">' + ((e.msg).match(/\[URL\](.*)\[\/URL\]/i))[1] + '</a>');
         }
 
