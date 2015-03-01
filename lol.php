@@ -8,7 +8,6 @@ function myErrorHandler($errno, $errstr, $errfile, $errline) {
 }
 set_error_handler('myErrorHandler');
 
-require_once("/var/www/dev/teamspeak/libraries/TeamSpeak3/TeamSpeak3.php");
 require_once("/var/www/dev/myDatabase.php");
 require '/var/www/dev/vendor/autoload.php';
 use LeagueWrap\Api;
@@ -20,89 +19,113 @@ $api->limit(500, 600);  // Set a limit of 500 requests per 600 (10 minutes) seco
 $summoner = $api->summoner();          // Load up the summoner request object.
 $currentGame = $api->currentGame();
 $api->attachStaticData(); 
-
+$api_game = $api->game();
 
 
 while (1) {
 
 echo PHP_EOL."Main loop starting!".PHP_EOL;
 
-
-// connect to local server in non-blocking mode, authenticate and spawn an object for the virtual server on port 9987
-$GLOBALS["ts3"] = TeamSpeak3::factory("serverquery://koppislandia:xg1rR+Ni@127.0.0.1:10011/?server_port=9987&blocking=0");
-// get notified on incoming private messages
-//$GLOBALS["ts2"]->notifyRegister("textchannel");
-//$ts3_VirtualServer->notifyRegister("textprivate");
-//$GLOBALS["ts3"]->notifyRegister("channel",0);
-
 $db = new myDatabase();
 
-try{
-while (1) {
-$GLOBALS["ts3"]->clientListReset();
 $nicks = array();
-foreach($GLOBALS["ts3"]->clientList() as $ts3_client)
-{
-
-    if($ts3_client["client_type"]) continue;
-
-
-    $clientinfo = $ts3_client->getInfo();
-
-
-    $cldbid = $clientinfo['client_database_id'];
-    $nickname = $clientinfo['client_nickname'];
-    $date = date('Y-m-d H:i:s');
-
-    echo "Nickname: ".$clientinfo['client_nickname'].PHP_EOL;
-    $searchname = $nickname;
-    switch ($nickname) {
-    case "Super":
-        $searchname = "Twitch chat";
-        break;
-    case "omena":
-        $searchname = "Happy Omena";
-        break;
-    }
-    $s = $summoner->info($searchname); 
-    try {
-        echo "League name: ".$s->name."\n";
+$tsclients = $db->query("SELECT name FROM teamspeak_clients");
+foreach ($tsclients as $row) {
+    $nickname = $row['name']; 
+    $db->exec("INSERT OR IGNORE INTO leagueoflegends (name) VALUES ('$nickname')");
+    @$id = intval($db->query("SELECT summonerid FROM leagueoflegends WHERE name = '$nickname'")[0]['summonerid']);
+    echo "Nickname: ".$nickname.PHP_EOL;
+    if ($id == NULL) {
+        $searchname = $nickname;
+        switch ($nickname) {
+        case "Super":
+            $searchname = "Twitch chat";
+            break;
+        case "omena":
+            $searchname = "Happy Omena";
+            break;
+        }
+        if ($searchname == "Jukebox") continue;
+        $s = $summoner->info($searchname); 
+        if ($s == NULL) continue;
+        $db->exec("UPDATE leagueoflegends SET summonerid = ".$s->id." WHERE name = '$nickname'");
         $id = $s->id;
-        $game = $currentGame->currentGame($s);
-        $participant = $game->participant($id);
-        $champion = $api->champion()->championById($participant->championId);
+    } 
+    try {
+        //echo "League name: ".$s->name."\n";
+
+        $r = $db->query("SELECT lastgameid FROM leagueoflegends WHERE name = '$nickname'");
+        $games = @$api_game->recent($id);
+        $recentgame  = $games[0]->stats;
+        $lastgameid = $games[0]->gameId;
+        $champion = $api->champion()->championById($games[0]->championId);
         $champname = str_replace("'","",$champion->championStaticData->name);
+        echo "db lastgameid: ".$r[0]['lastgameid']." last gameid: ".$lastgameid."\n";
+        //print_r( $recentgame);
+        if ($r[0]['lastgameid'] != $lastgameid){
+            $db->exec("UPDATE leagueoflegends SET lastgameid = $lastgameid WHERE name = '$nickname'");
+            if ($recentgame->win == 1) {
+            $msg = '"http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
+                'Käyttäjä '.$nickname.' voitti lol pelin sankarilla '.$champname.'"';
+            $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
+                'Onnittelut! sait jopa '.$recentgame->championsKilled.' tappoa ja kuolit vain '.$recentgame->numDeaths.' kertaa"';
+            $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
+                'Assisteja sait '.$recentgame->assists.' ja asetit tiimillesi jopa '. $recentgame->wardPlaced . ' wardia"';
+            $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
+                'Tapoit hurjat '.$recentgame->minionsKilled.' minionia"';
+            } else {
+            $msg = '"http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
+                'Käyttäjä '.$nickname.' hävisi lol pelin sankarilla '.$champname.'"';
+            $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
+                'Hyi sinua! sait vain '.$recentgame->championsKilled.' tappoa ja feedit '.$recentgame->numDeaths.' kertaa"';
+            $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
+                'Assisteja sait '.$recentgame->assists.' ja asetit vain '. $recentgame->wardPlaced . ' wardia"';
+            $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
+                'Tapoit vain '.$recentgame->minionsKilled.' minionia"';
+            }sendmsg($msg); 
+        }
+
+        $game = $currentGame->currentGame($id);
+        $participant = $game->participant($id);
+        $gameid = $game->gameId;
+        $champion = $api->champion()->championById($participant->championId);
+        $champname = str_replace(" ","",str_replace("'","",$champion->championStaticData->name));
         echo "name: " . $champname . "\n";
-        $r = $db->query("SELECT lolchamp FROM teamspeak_clients WHERE name = '$nickname'");
-        if ($r[0]['lolchamp'] != $champname) {
-            $db->exec("UPDATE teamspeak_clients SET lolchamp = '$champname' WHERE name = '$nickname'");
+
+        $r = $db->query("SELECT champ, gameid FROM leagueoflegends WHERE name = '$nickname'");
+        echo "db gameid: ".$r[0]['gameid']." current gameid: ".$gameid."\n";
+        echo "db champname: ".$r[0]['champ']." current champname: ".$champname."\n";
+        if ($r[0]['gameid'] != $gameid) {
+            echo "Updated " . $r[0]['gameid'] . " to $gameid \n";
+            $db->exec("UPDATE leagueoflegends SET gameid = $gameid, champ = '$champname' WHERE name = '$nickname'");
             $db->exec("UPDATE teamspeak_changes SET id = id + 1");
+            $msg = '"http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
+            'Käyttäjä '.$nickname.' aloitti uuden pelin sankarilla '.$champname.'"';
+            sendmsg($msg);
         }
     } catch (Exception $e) {
-        echo "Ei pelaa \n";
-        $r = $db->query("SELECT lolchamp FROM teamspeak_clients WHERE name = '$nickname'");
-        if ($r[0]['lolchamp'] != NULL) {
-            $db->exec("UPDATE teamspeak_clients SET lolchamp = NULL WHERE name = '$nickname'");
+        echo "Ei pelaa \n";//.$e->getMessage()."\n";
+        $r = $db->query("SELECT champ FROM leagueoflegends WHERE name = '$nickname'");
+        if ($r[0]['champ'] != NULL) {
+            $champname = $r[0]['champ'];
+            echo "Cleared champion $champname  \n";
+            $db->exec("UPDATE leagueoflegends SET champ = NULL WHERE name = '$nickname'");
             $db->exec("UPDATE teamspeak_changes SET id = id + 1");
         }
     }
+    
+    echo "\n";
 }
 
 echo "\n";
 usleep(10000000);
 }
 
-} catch (Exception $e) {
-    $date = date('Y-m-d H:i:s');
 
-    echo $date.' Caught exception: ',  $e->getMessage(), "\n";   
-
-    $db = NULL;
-    
-    continue;
-}}
 
 function sendmsg($msg) {
+    echo "sent message: " . $msg . "\n";
+//      return;
     $msg = utf8_decode($msg);
     $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
     socket_sendto($socket, $msg, strlen($msg), 0, "91.156.255.202", 1124);

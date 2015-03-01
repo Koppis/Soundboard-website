@@ -129,11 +129,11 @@ class Teamspeak extends Databasecheck {
                 $data [] = array('type'=>1, 'id' => intval($row['id']), 'name'=> $row['name'], 'parent'=>intval($row['parent']));
             }
 
-            $result = $this->db->query("SELECT * FROM teamspeak_clients");
+            $result = $this->db->query("SELECT * FROM teamspeak_clients JOIN leagueoflegends ON teamspeak_clients.name = leagueoflegends.name");
 
             foreach ($result as $row) {
                 $data [] = array('type'=>0, 'id' => intval($row['id']), 'name'=> $row['name'], 'channel'=>intval($row['channel']),
-                    'online'=>1, 'mode'=>intval($row['mode']), 'lolchamp'=>$row['lolchamp']);
+                    'online'=>1, 'mode'=>intval($row['mode']), 'lolchamp'=>$row['lolchamp'], 'summonerid'=>$row['summonerid']);
             }
 
             $data[] = intval($this->result[0]['id']);
