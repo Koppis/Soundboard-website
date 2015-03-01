@@ -1441,7 +1441,12 @@ function handle_payload_teamspeak(payload_teamspeak) {
     });
     $.each(payload_teamspeak, function(i, a) {
         if (a.type == 0 && a.online == 1) {
-            var clienticon = $('<li style="list-style-type: none;" class="ts_client" value="' + a.id + '">' + a.name + 
+            var nickname;
+            if (a.summonerid == null)
+                nickname = a.name;
+            else
+                nickname = '<a href="http://www.elophant.com/league-of-legends/summoner/eune/'+a.summonerid+'/recent-games">'+a.name+'</a>';
+            var clienticon = $('<li style="list-style-type: none;" class="ts_client" value="' + a.id + '">' + nickname + 
                 (a.lolchamp != null ? " - <img src='/images/lol/champion/"+a.lolchamp+".png' />":"") + '</li>');
             $(newlist).find('li[value="' + a.channel + '"]').children('ul').prepend(clienticon);
             switch (a.mode) {
