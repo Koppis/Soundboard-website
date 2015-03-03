@@ -67,24 +67,29 @@ foreach ($tsclients as $row) {
         //print_r( $recentgame);
         if ($r[0]['lastgameid'] != $lastgameid){
             $db->exec("UPDATE leagueoflegends SET lastgameid = $lastgameid WHERE name = '$nickname'");
+            $kills = intval($recentgame->championsKilled);
+            $deaths = intval($recentgame->numDeaths);
+            $assists = intval($recentgame->assists);
+            $wards = intval($recentgame->wardPlaced);
+            $cscore = intval($recentgame->minionsKilledi + $recentgame->neutralMinionsKilled); 
             if ($recentgame->win == 1) {
             $msg = '"http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
                 'Käyttäjä '.$nickname.' voitti lol pelin sankarilla '.$champname.'"';
             $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
-                'Onnittelut! sait jopa '.$recentgame->championsKilled.' tappoa ja kuolit vain '.$recentgame->numDeaths.' kertaa"';
+                'Onnittelut! sait jopa '.$kills.' tappoa ja kuolit vain '.$deaths.' kertaa"';
             $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
-                'Assisteja sait '.$recentgame->assists.' ja asetit tiimillesi jopa '. $recentgame->wardPlaced . ' wardia"';
+                'Assisteja sait '.$assists.' ja asetit tiimillesi jopa '. $wards. ' wardia"';
             $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
-                'Tapoit hurjat '.$recentgame->minionsKilled.' minionia"';
+                'Tapoit hurjat '.$cscore.' minionia"';
             } else {
             $msg = '"http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
                 'Käyttäjä '.$nickname.' hävisi lol pelin sankarilla '.$champname.'"';
             $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
-                'Hyi sinua! sait vain '.$recentgame->championsKilled.' tappoa ja feedit '.$recentgame->numDeaths.' kertaa"';
+                'Hyi sinua! sait vain '.$kills.' tappoa ja feedit '.$deaths.' kertaa"';
             $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
-                'Assisteja sait '.$recentgame->assists.' ja asetit vain '. $recentgame->wardPlaced . ' wardia"';
+                'Assisteja sait '.$assists.' ja asetit vain '. $wards. ' wardia"';
             $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
-                'Tapoit vain '.$recentgame->minionsKilled.' minionia"';
+                'Tapoit vain '.$cscore.' minionia"';
             }sendmsg($msg); 
         }
 
