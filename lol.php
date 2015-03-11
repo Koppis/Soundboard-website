@@ -28,7 +28,7 @@ echo PHP_EOL."Main loop starting!".PHP_EOL;
 
 $db = new myDatabase();
 
-$nicks = array();
+$summoners = array();
 $tsclients = $db->query("SELECT name FROM teamspeak_clients");
 foreach ($tsclients as $row) {
     $nickname = $row['name']; 
@@ -55,8 +55,8 @@ foreach ($tsclients as $row) {
         $id = $s->id;
     } 
     try {
-        //echo "League name: ".$s->name."\n";
-
+        echo "League id: ".$id."\n";
+        
         $r = $db->query("SELECT lastgameid FROM leagueoflegends WHERE name = '$nickname'");
         $games = @$api_game->recent($id);
         $recentgame  = $games[0]->stats;
@@ -71,7 +71,7 @@ foreach ($tsclients as $row) {
             $deaths = intval($recentgame->numDeaths);
             $assists = intval($recentgame->assists);
             $wards = intval($recentgame->wardPlaced);
-            $cscore = intval($recentgame->minionsKilledi + $recentgame->neutralMinionsKilled); 
+            $cscore = intval($recentgame->minionsKilled + $recentgame->neutralMinionsKilled); 
             if ($recentgame->win == 1) {
             $msg = '"http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
                 'Käyttäjä '.$nickname.' voitti lol pelin sankarilla '.$champname.'"';
@@ -80,16 +80,19 @@ foreach ($tsclients as $row) {
             $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
                 'Assisteja sait '.$assists.' ja asetit tiimillesi jopa '. $wards. ' wardia"';
             $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
-                'Tapoit hurjat '.$cscore.' minionia"';
+                'Tapoit hurjat '.$cscore.' minionia. Pääset vielä '.$champname.'llasi toppiin!"';
             } else {
             $msg = '"http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
                 'Käyttäjä '.$nickname.' hävisi lol pelin sankarilla '.$champname.'"';
             $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
-                'Hyi sinua! sait vain '.$kills.' tappoa ja feedit '.$deaths.' kertaa"';
+                'Hyi sinua! Varastit tiimiltäsi '.$kills.' tappoa ja feedit '.$deaths.' kertaa"';
             $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
-                'Assisteja sait '.$assists.' ja asetit vain '. $wards. ' wardia"';
+                'Assisteja sait '.$assists.' ja asetit säälittävästi '. $wards. ' wardia"';
+            if ($wards < 10)
+                $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
+                    'Tiedätkö mikä edes on wardi?"';
             $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
-                'Tapoit vain '.$cscore.' minionia"';
+                'Tapoit vaivaiset '.$cscore.' minionia. Mikset jo uninstalloi lolia homo?"';
             }sendmsg($msg); 
         }
 
@@ -97,7 +100,7 @@ foreach ($tsclients as $row) {
         $participant = $game->participant($id);
         $gameid = $game->gameId;
         $champion = $api->champion()->championById($participant->championId);
-        $champname = str_replace(" ","",str_replace("'","",$champion->championStaticData->name));
+        $champname = str_replace(".","",str_replace(" ","",str_replace("'","",$champion->championStaticData->name)));
         echo "name: " . $champname . "\n";
 
         $r = $db->query("SELECT champ, gameid FROM leagueoflegends WHERE name = '$nickname'");

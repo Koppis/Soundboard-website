@@ -79,7 +79,7 @@ function longPoll(loop) {
                         $.each(payload.vitsit, function(i, vitsi) {
                             newhtml += '<li data-rowid="' +
                                 vitsi.rowid +
-                                '"><button style="padding:2px;min-width:40px;" class="deletevitsi">X</button><button class="vitsi_rate">lis‰‰ memeihin</button>' +
+                                '"><button style="padding:2px;min-width:40px;" class="deletevitsi">X</button><button class="vitsi_rate">lis√§√§ memeihin</button>' +
                                 vitsi.vitsi +
                                 '</li>';
                         });

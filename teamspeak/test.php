@@ -104,7 +104,7 @@ function onTextmessage(TeamSpeak3_Adapter_ServerQuery_Event $event, TeamSpeak3_N
     echo "Client " . $event["invokername"] . " sent textmessage: " . $event["msg"] . PHP_EOL;
 
     $user = $event["invokername"];
-    $msg = $event["msg"];
+    $msg = htmlspecialchars($event["msg"]);
     $date = date('Y-m-d H:i:s');
 
     $GLOBALS["db"]->exec("INSERT INTO teamspeak_chat (pvm,user,msg) VALUES ('$date','$user','$msg')");
