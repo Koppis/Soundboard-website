@@ -1290,7 +1290,7 @@ function handle_payload_youtube(payload_youtube) {
                     setTimeout(function() {
                         callPlayer(rand, "playVideo");
                         callPlayer(rand, "mute");
-                    },1500);
+                    },2500);
                 });
             }
         }
