@@ -197,6 +197,15 @@ function handle_payload_emoticons(payload_emoticons) {
                         div.html("<ul></ul>");
                         $.each(payload.processes, function(i, e) {
                             div.children("ul").append('<li>' + e.name + '<button class="killpid" title="' + e.pid + '" style="padding:2px;min-width:20px;">X</button></li>');
+                            if (e.name.substring(0,2) == "yt") {
+                                callPlayer(rand, function() {
+                                    // This function runs once the player is ready ("onYouTubePlayerReady")
+                                    setTimeout(function() {
+                                        callPlayer(rand, "playVideo");
+                                        callPlayer(rand, "mute");
+                                    },1700);
+                                });
+                            }
                         })
                     }
 
