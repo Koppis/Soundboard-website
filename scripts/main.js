@@ -23,7 +23,7 @@ var happening = false;
 var vilkku = false;
 var usercolor = "";
 var username = "";
-
+var ping = 0;
 
 
 

@@ -37,6 +37,7 @@
 		</tr>-->
 		<tr>
             <td style="word-break:break-word;" rowspan="1" valign="top" bgcolor="#FAFAFA">
+                <div id="ping">Ping: checking...</div>
 				<button class="stop">Stop music</button>
 				<button class="stop_youtube">Stop youtube</button>
                 <a href="game/index.html">Peli</a><br>

@@ -12,23 +12,15 @@ function handle_payload_youtube(payload_youtube) {
             if (arr.length > 1)
                 id = arr[1];
 
-            rand = Math.random();
 
             $('#youtube').html('');
             $('#youtube').html('<a href="' + payload_youtube.link + '">' +
                 payload_youtube.name + '</a>' +
-                '<iframe id="' + rand + '" type="text/html" width="100%" height="100%"' +
+                '<iframe id="13371234" type="text/html" width="100%" height="100%"' +
                 ' src="http://www.youtube.com/embed/' + id + '?enablejsapi=1&autohide=1&showinfo=0" frameborder="0"/>'
             );
             if (youtube_rowid != 0) {
                 console.log(youtube_rowid);
-                callPlayer(rand, function() {
-                    // This function runs once the player is ready ("onYouTubePlayerReady")
-                    setTimeout(function() {
-                        callPlayer(rand, "playVideo");
-                        callPlayer(rand, "mute");
-                    },2500);
-                });
             }
         }
     }

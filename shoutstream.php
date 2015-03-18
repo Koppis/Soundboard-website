@@ -438,6 +438,6 @@ foreach ($checks as $key => $value) {
 		$return_array[$key] = $value->getdata();
 }
 $db = NULL;
-
+$return_array['ping'] = round(microtime(true) * 1000);
 die(json_encode($return_array));
 

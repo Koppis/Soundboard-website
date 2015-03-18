@@ -94,6 +94,15 @@ function handle_payload_emoticons(payload_emoticons) {
                 if (payload.status == "results") {
                     //console.log(JSON.stringify(payload));
                     console.log(payload);
+                    console.log(Date.now());
+                    if (payload.ping != undefined) {
+                        ping = (Date.now() - parseInt(payload.ping) + 2000);
+                        $("#ping").html("Ping: " + ping)
+                    }
+                    if (payload.youtube != undefined) {
+                            handle_payload_youtube(payload.youtube);
+                    }
+                            console.log("line f: " + (new Date().getTime() - start_time) + "ms");
                     if (payload.messages != undefined && payload.messages.length > 0) {
                         var newhtml = '';
                         $.each(payload.messages, function(i, msg) {
@@ -176,10 +185,6 @@ function handle_payload_emoticons(payload_emoticons) {
                     console.log((new Date().getTime() - start_time) + "ms");
                             console.log("line d: " + (new Date().getTime() - start_time) + "ms");
 
-                    if (payload.youtube != undefined) {
-                            handle_payload_youtube(payload.youtube);
-                    }
-                            console.log("line f: " + (new Date().getTime() - start_time) + "ms");
 
                     if (payload.teamspeak != undefined) {
                         handle_payload_teamspeak(payload.teamspeak);
@@ -198,12 +203,14 @@ function handle_payload_emoticons(payload_emoticons) {
                         $.each(payload.processes, function(i, e) {
                             div.children("ul").append('<li>' + e.name + '<button class="killpid" title="' + e.pid + '" style="padding:2px;min-width:20px;">X</button></li>');
                             if (e.name.substring(0,2) == "yt") {
-                                callPlayer(rand, function() {
+                                callPlayer(13371234, function() {
                                     // This function runs once the player is ready ("onYouTubePlayerReady")
-                                    setTimeout(function() {
-                                        callPlayer(rand, "playVideo");
-                                        callPlayer(rand, "mute");
-                                    },1700);
+                                        callPlayer(13371234, "playVideo");
+                                        callPlayer(13371234, "mute");
+                                        setTimeout(function(){
+                                            callPlayer(13371234, "seekTo",[3,false]);
+                                            callPlayer(13371234, "playVideo");
+                                        },300 + ping);
                                 });
                             }
                         })
@@ -269,7 +276,7 @@ var happening = false;
 var vilkku = false;
 var usercolor = "";
 var username = "";
-
+var ping = 0;
 
 
 
@@ -1284,23 +1291,15 @@ function handle_payload_youtube(payload_youtube) {
             if (arr.length > 1)
                 id = arr[1];
 
-            rand = Math.random();
 
             $('#youtube').html('');
             $('#youtube').html('<a href="' + payload_youtube.link + '">' +
                 payload_youtube.name + '</a>' +
-                '<iframe id="' + rand + '" type="text/html" width="100%" height="100%"' +
+                '<iframe id="13371234" type="text/html" width="100%" height="100%"' +
                 ' src="http://www.youtube.com/embed/' + id + '?enablejsapi=1&autohide=1&showinfo=0" frameborder="0"/>'
             );
             if (youtube_rowid != 0) {
                 console.log(youtube_rowid);
-                callPlayer(rand, function() {
-                    // This function runs once the player is ready ("onYouTubePlayerReady")
-                    setTimeout(function() {
-                        callPlayer(rand, "playVideo");
-                        callPlayer(rand, "mute");
-                    },2500);
-                });
             }
         }
     }
