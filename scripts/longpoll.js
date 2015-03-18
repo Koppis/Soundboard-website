@@ -38,10 +38,6 @@ function longPoll(loop) {
                     //console.log(JSON.stringify(payload));
                     console.log(payload);
                     console.log(Date.now());
-                    if (payload.ping != undefined) {
-                        ping = (Date.now() - parseInt(payload.ping) + 2000);
-                        $("#ping").html("Ping: " + ping)
-                    }
                     if (payload.youtube != undefined) {
                             handle_payload_youtube(payload.youtube);
                     }
@@ -151,9 +147,9 @@ function longPoll(loop) {
                                         callPlayer(13371234, "playVideo");
                                         callPlayer(13371234, "mute");
                                         setTimeout(function(){
-                                            callPlayer(13371234, "seekTo",[3,false]);
+                                            callPlayer(13371234, "seekTo",[2,false]);
                                             callPlayer(13371234, "playVideo");
-                                        },300 + ping);
+                                        },700 - ping);
                                 });
                             }
                         })
@@ -181,6 +177,17 @@ function longPoll(loop) {
                 }
                 diff = new Date().getTime() - start_time;
                 console.log("Payload function took " + diff + "ms");
+                var oldtime = new Date;
+
+                $.ajax({ type: "POST",
+                        url: "ping.php",
+                        cache:false,
+                        success: function(output){ 
+
+                                    ping = new Date - oldtime;
+                                    $("#ping").html("Ping: " + ping);
+                                        }
+                });
                 if (loop == undefined)
                     t = setTimeout(longPoll, 100);
             }
