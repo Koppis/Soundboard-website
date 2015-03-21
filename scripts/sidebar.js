@@ -4,6 +4,36 @@
  * SIDEBAR
  * ***************************************************************************************
  */
+function syncyoutube() {
+    var processpingtime = (new Date().getTime());
+    $.ajax({
+        data:{time:youtube_synctime},
+        url:"processping.php",
+        type:'GET',
+        dataType: 'json',
+        success:function(data){
+            console.log("Success in process ping! data: "+data);
+            console.log("your ping was " + (new Date().getTime() - processpingtime));
+            $("#syncyoutube").html("Sync - lastping: " + (new Date().getTime() - processpingtime));
+            delay = parseInt(data);
+            //delay += 50;
+            delay += (new Date().getTime() - processpingtime) / 2;
+            seconds = Math.floor(delay/1000);
+            mseconds = delay % 1000;
+            console.log("\nseconds = " + seconds + "\nmilliseconds = " + mseconds);
+            callPlayer(13371234, function() {
+                // This function runs once the player is ready ("onYouTubePlayerReady")
+                    callPlayer(13371234, "playVideo");
+                    callPlayer(13371234, "mute");
+                    setTimeout(function(){
+                        callPlayer(13371234, "seekTo",[(seconds + 1)]);
+                        console.log("seeking to " + (seconds + 1));
+                        callPlayer(13371234, "playVideo");
+                    },1000 - mseconds);
+            });
+        }
+    })
+}
 function handle_payload_youtube(payload_youtube) {
     if ($('#youtube').length != 0) {
         id = "";
@@ -151,3 +181,5 @@ $('body').on("click", "#enlargeyoutube", function() {
     }
 });
 
+//Youtube-sync click
+$("body").on('click', '#syncyoutube', syncyoutube);

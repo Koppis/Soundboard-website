@@ -67,10 +67,12 @@ while (true) {
         $arr = explode(" ",$buf,3);
         $pid = $arr[1];
         $name = array_pop(explode("\\",array_pop(explode("/",$arr[2]))));
-        if (substr($arr[2],0,2) == "yt")
-            $db->exec("INSERT INTO processes (pid,name) VALUES ($pid,'yt$name')");
-        else
+        if (substr($arr[2],0,2) == "yt") {
+            $milliseconds = round(microtime(true) * 1000);
+            $db->exec("INSERT INTO processes (pid,name,time) VALUES ($pid,'yt$name',$milliseconds)");
+        }else{
             $db->exec("INSERT INTO processes (pid,name) VALUES ($pid,'$name')");
+        }
         $db->exec("UPDATE processes_revision SET revision = revision + 1");
     } elseif (substr($buf,0,4) == "kill") {
         $pid = substr($buf,5);

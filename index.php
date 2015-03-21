@@ -37,7 +37,6 @@
 		</tr>-->
 		<tr>
             <td style="word-break:break-word;" rowspan="1" valign="top" bgcolor="#FAFAFA">
-                <div id="ping">Ping: checking...</div>
 				<button class="stop">Stop music</button>
 				<button class="stop_youtube">Stop youtube</button>
                 <a href="game/index.html">Peli</a><br>
@@ -51,6 +50,7 @@
 					<div id="processes"></div> 
 
 					<div id="tjt"></div>
+                    <button style="padding:2px;min-width:20px;" id="syncyoutube">Sync</button>
                     <button style="padding:2px;min-width:20px;" id="enlargeyoutube">Enlarge</button>
                     <button style="padding:2px;min-width:20px;" id="hideyoutube">Hide</button>
                     <!--<div id="youtube"></div>-->

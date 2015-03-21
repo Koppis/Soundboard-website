@@ -142,15 +142,10 @@ function longPoll(loop) {
                         $.each(payload.processes, function(i, e) {
                             div.children("ul").append('<li>' + e.name + '<button class="killpid" title="' + e.pid + '" style="padding:2px;min-width:20px;">X</button></li>');
                             if (e.name.substring(0,2) == "yt") {
-                                callPlayer(13371234, function() {
-                                    // This function runs once the player is ready ("onYouTubePlayerReady")
-                                        callPlayer(13371234, "playVideo");
-                                        callPlayer(13371234, "mute");
-                                        setTimeout(function(){
-                                            callPlayer(13371234, "seekTo",[2,false]);
-                                            callPlayer(13371234, "playVideo");
-                                        },700 - ping);
-                                });
+                                youtube_synctime = parseInt(e.time);
+                                setTimeout(function(){
+                                syncyoutube();
+                                },500);
                             }
                         })
                     }
@@ -177,17 +172,7 @@ function longPoll(loop) {
                 }
                 diff = new Date().getTime() - start_time;
                 console.log("Payload function took " + diff + "ms");
-                var oldtime = new Date;
 
-                $.ajax({ type: "POST",
-                        url: "ping.php",
-                        cache:false,
-                        success: function(output){ 
-
-                                    ping = new Date - oldtime;
-                                    $("#ping").html("Ping: " + ping);
-                                        }
-                });
                 if (loop == undefined)
                     t = setTimeout(longPoll, 100);
             }

@@ -80,7 +80,7 @@ foreach ($tsclients as $row) {
             $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
                 'Assisteja sait '.$assists.' ja asetit tiimillesi jopa '. $wards. ' wardia"';
             $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
-                'Tapoit hurjat '.$cscore.' minionia. Pääset vielä '.$champname.'llasi toppiin!"';
+                'Pääset vielä '.$champname.'llasi toppiin!"';
             } else {
             $msg = '"http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
                 'Käyttäjä '.$nickname.' hävisi lol pelin sankarilla '.$champname.'"';
@@ -92,7 +92,7 @@ foreach ($tsclients as $row) {
                 $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
                     'Tiedätkö mikä edes on wardi?"';
             $msg .= ' "http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
-                'Tapoit vaivaiset '.$cscore.' minionia. Mikset jo uninstalloi lolia homo?"';
+                'Mikset jo uninstalloi lolia homo?"';
             }sendmsg($msg); 
         }
 

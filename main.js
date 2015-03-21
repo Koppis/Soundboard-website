@@ -199,15 +199,10 @@ function handle_payload_emoticons(payload_emoticons) {
                         $.each(payload.processes, function(i, e) {
                             div.children("ul").append('<li>' + e.name + '<button class="killpid" title="' + e.pid + '" style="padding:2px;min-width:20px;">X</button></li>');
                             if (e.name.substring(0,2) == "yt") {
-                                callPlayer(13371234, function() {
-                                    // This function runs once the player is ready ("onYouTubePlayerReady")
-                                        callPlayer(13371234, "playVideo");
-                                        callPlayer(13371234, "mute");
-                                        setTimeout(function(){
-                                            callPlayer(13371234, "seekTo",[2,false]);
-                                            callPlayer(13371234, "playVideo");
-                                        },700 - ping);
-                                });
+                                youtube_synctime = parseInt(e.time);
+                                setTimeout(function(){
+                                syncyoutube();
+                                },500);
                             }
                         })
                     }
@@ -234,17 +229,7 @@ function handle_payload_emoticons(payload_emoticons) {
                 }
                 diff = new Date().getTime() - start_time;
                 console.log("Payload function took " + diff + "ms");
-                var oldtime = new Date;
 
-                $.ajax({ type: "POST",
-                        url: "ping.php",
-                        cache:false,
-                        success: function(output){ 
-
-                                    ping = new Date - oldtime;
-                                    $("#ping").html("Ping: " + ping);
-                                        }
-                });
                 if (loop == undefined)
                     t = setTimeout(longPoll, 100);
             }
@@ -283,7 +268,7 @@ var happening = false;
 var vilkku = false;
 var usercolor = "";
 var username = "";
-
+var youtube_synctime = 0;
 
 
 //console.log = function(msg){};
@@ -1289,6 +1274,36 @@ $("body").on('click', '#moreshouts', function() {
  * SIDEBAR
  * ***************************************************************************************
  */
+function syncyoutube() {
+    var processpingtime = (new Date().getTime());
+    $.ajax({
+        data:{time:youtube_synctime},
+        url:"processping.php",
+        type:'GET',
+        dataType: 'json',
+        success:function(data){
+            console.log("Success in process ping! data: "+data);
+            console.log("your ping was " + (new Date().getTime() - processpingtime));
+            $("#syncyoutube").html("Sync - lastping: " + (new Date().getTime() - processpingtime));
+            delay = parseInt(data);
+            //delay += 50;
+            delay += (new Date().getTime() - processpingtime) / 2;
+            seconds = Math.floor(delay/1000);
+            mseconds = delay % 1000;
+            console.log("\nseconds = " + seconds + "\nmilliseconds = " + mseconds);
+            callPlayer(13371234, function() {
+                // This function runs once the player is ready ("onYouTubePlayerReady")
+                    callPlayer(13371234, "playVideo");
+                    callPlayer(13371234, "mute");
+                    setTimeout(function(){
+                        callPlayer(13371234, "seekTo",[(seconds + 1)]);
+                        console.log("seeking to " + (seconds + 1));
+                        callPlayer(13371234, "playVideo");
+                    },1000 - mseconds);
+            });
+        }
+    })
+}
 function handle_payload_youtube(payload_youtube) {
     if ($('#youtube').length != 0) {
         id = "";
@@ -1436,6 +1451,8 @@ $('body').on("click", "#enlargeyoutube", function() {
     }
 });
 
+//Youtube-sync click
+$("body").on('click', '#syncyoutube', syncyoutube);
 function handle_payload_teamspeak(payload_teamspeak) {
     teamspeak_revision = payload_teamspeak.pop();
 

@@ -80,7 +80,7 @@ class Processes extends DatabaseCheck {
             $result = $this->db->query("SELECT * FROM processes");
             $data = array();
 			foreach ($result as $row){		
-				$data[] = array('pid'=>$row['pid'],'name'=>$row['name']);
+				$data[] = array('pid'=>$row['pid'],'name'=>$row['name'],'time'=>$row['time']);
 			}
             
 			$data[] = intval($this->result[0]['revision']);
@@ -438,6 +438,5 @@ foreach ($checks as $key => $value) {
 		$return_array[$key] = $value->getdata();
 }
 $db = NULL;
-$return_array['ping'] = round(microtime(true) * 1000);
 die(json_encode($return_array));
 
