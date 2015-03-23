@@ -35,10 +35,9 @@ class myDatabase {
         $ret = @$this->db->query($str);
         if ($ret === FALSE) {
             initDB($this->db);
-            try {
-                $ret = $this->db->query($str);
-            } catch (Exception $e) {
-                echo "Error in PDO query() str : ".$str."\n".$e->getMessage();
+            @$ret = $this->db->query($str);
+            if ($ret === FALSE) {
+                echo "Error in PDO query() str : ".$str."\n";
             }
         }
         if ($ret === FALSE)
@@ -52,10 +51,9 @@ class myDatabase {
         $ret = @$this->db->exec($str);
         if ($ret === FALSE) {
             initDB($this->db);
-            try {
-                $ret = $this->db->exec($str);
-            } catch (Exception $e) {
-                echo "Error in PDO exec() str : ".$str."\n".$e->getMessage();
+            @$ret = $this->db->exec($str);
+            if ($ret === FALSE) {
+                echo "Error in PDO exec() str : ".$str."\n";
             }
         }
         return $ret;
