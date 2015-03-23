@@ -33,7 +33,7 @@ if (substr($msg,7,8) == "recorded") {
 	preg_match('!(https?://)?www.youtube.com/watch\?v=(.{11})!i', $msg, $matches);
 	echo $matches[2];
 	if ($matches){
-	$vidtitle = youtube_title($matches[2]);
+	$vidtitle = str_replace("'","''",youtube_title($matches[2]));
 	} else {
 	$vidtitle = $msg;
 	}
