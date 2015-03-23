@@ -35,7 +35,11 @@ class myDatabase {
         $ret = @$this->db->query($str);
         if ($ret === FALSE) {
             initDB($this->db);
-            $ret = $this->db->query($str);
+            try {
+                $ret = $this->db->query($str);
+            } catch (Exception $e) {
+                echo "Error in PDO query() str : ".$str."\n".$e->getMessage();
+            }
         }
         if ($ret === FALSE)
             return array();
@@ -48,7 +52,11 @@ class myDatabase {
         $ret = @$this->db->exec($str);
         if ($ret === FALSE) {
             initDB($this->db);
-            $ret = $this->db->exec($str);
+            try {
+                $ret = $this->db->exec($str);
+            } catch (Exception $e) {
+                echo "Error in PDO exec() str : ".$str."\n".$e->getMessage();
+            }
         }
         return $ret;
     } 
