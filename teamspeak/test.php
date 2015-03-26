@@ -196,20 +196,31 @@ function onClientconnect(TeamSpeak3_Adapter_ServerQuery_Event $event, TeamSpeak3
     $msg = "";
     switch ($cldbid) {
         case 6: // Eero
-        $msg = "sounds\\recorded\\4035.wav";
-        break;
+        //$msg = "sounds\\recorded\\4035.wav";
+            $msg = '"http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
+                'Hahaha? mitä kuulenkaan? onko se eero? hahaha!"';
+            break;
         case 39: // Teemu
-        $msg = "sounds\\recorded\\932.wav";
-        break;
+        //$msg = "sounds\\recorded\\932.wav";
+            $msg = '"http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
+                'Hahaha? mitä kuulenkaan? onko se teemu? hahaha!"';
+            break;
         case 8: // Lassi
-        $msg = "sounds\\recorded\\761.wav";
-        break;
+        //$msg = "sounds\\recorded\\761.wav";
+            $msg = '"http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
+                'Hahaha? mitä kuulenkaan? onko se lassi? hahaha!"';
+            break;
         case 4: // Lauri
-        $msg = "sounds\\recorded\\624.wav";
-        break;
+        //$msg = "sounds\\recorded\\624.wav";
+        
+            $msg = '"http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
+                'Hahaha? mitä kuulenkaan? onko se laura? hahaha!"';
+            break;
         case 7: // Touko
-        $msg = "sounds\\recorded\\286.wav";
-        break;
+        //$msg = "sounds\\recorded\\286.wav";
+            $msg = '"http://translate.google.com/translate_tts?tl=fi&ie=UTF-8&q='.
+                'Hahaha? mitä kuulenkaan? onko se touko? hahaha!"';
+            break;
     }
     if ($msg != "") {
         $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);

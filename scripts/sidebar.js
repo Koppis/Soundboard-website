@@ -125,6 +125,28 @@ $("body").on("click", ".stop", function() {
 });
 
 
+//process_command keypress
+$("body").on("keypress", ".process_command", function(e) {
+    if (e.keyCode == 13 && $(this).val() != "") {
+        msg = $(this).val();
+
+        pid = $(this).prev().attr("title"); 
+
+        $.ajax({
+            type: 'POST',
+            url: 'process_command.php',
+            data: {
+                user: $('#username').val(),
+                msg: msg,
+                pid:pid
+            },
+            success: function(msg) {
+                console.log('process_command.php: ');
+                console.log(msg);
+            }
+        });
+    }
+});
 //ts_chatin enterpainallus
 $("body").on("keypress", "#ytchat_input", function(e) {
     if (e.keyCode == 13 && $('#ytchat_input').val() != "") {

@@ -197,7 +197,7 @@ function handle_payload_emoticons(payload_emoticons) {
                         var div = $("#processes");
                         div.html("<ul></ul>");
                         $.each(payload.processes, function(i, e) {
-                            div.children("ul").append('<li>' + e.name + '<button class="killpid" title="' + e.pid + '" style="padding:2px;min-width:20px;">X</button></li>');
+                            div.children("ul").append('<li>' + e.name + '<button class="killpid" title="' + e.pid + '" style="padding:2px;min-width:20px;">X</button><input type="text" class="process_command" style="width:3em;"></input></li>');
                             if (e.name.substring(0,2) == "yt") {
                                 youtube_synctime = parseInt(e.time);
                                 setTimeout(function(){
@@ -1395,6 +1395,28 @@ $("body").on("click", ".stop", function() {
 });
 
 
+//process_command keypress
+$("body").on("keypress", ".process_command", function(e) {
+    if (e.keyCode == 13 && $(this).val() != "") {
+        msg = $(this).val();
+
+        pid = $(this).prev().attr("title"); 
+
+        $.ajax({
+            type: 'POST',
+            url: 'process_command.php',
+            data: {
+                user: $('#username').val(),
+                msg: msg,
+                pid:pid
+            },
+            success: function(msg) {
+                console.log('process_command.php: ');
+                console.log(msg);
+            }
+        });
+    }
+});
 //ts_chatin enterpainallus
 $("body").on("keypress", "#ytchat_input", function(e) {
     if (e.keyCode == 13 && $('#ytchat_input').val() != "") {
