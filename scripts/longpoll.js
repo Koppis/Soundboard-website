@@ -140,7 +140,10 @@ function longPoll(loop) {
                         var div = $("#processes");
                         div.html("<ul></ul>");
                         $.each(payload.processes, function(i, e) {
-                            div.children("ul").append('<li>' + e.name + '<button class="killpid" title="' + e.pid + '" style="padding:2px;min-width:20px;">X</button><input type="text" class="process_command" style="width:3em;"></input></li>');
+                            div.children("ul").append('<li>' + e.name + '<button class="killpid" title="' + e.pid + '" style="padding:2px;min-width:20px;">X</button>'+
+                                '<button class="process_slow" title="' + e.pid + '" style="padding:2px;min-width:20px;">\<</button>'+
+                                '<button class="process_fast" title="' + e.pid + '" style="padding:2px;min-width:20px;">\></button>'+
+                                '<input type="text" class="process_command" style="width:3em;"></input></li>');
                             if (e.name.substring(0,2) == "yt") {
                                 youtube_synctime = parseInt(e.time);
                                 setTimeout(function(){

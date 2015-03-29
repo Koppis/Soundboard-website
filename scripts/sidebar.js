@@ -125,6 +125,46 @@ $("body").on("click", ".stop", function() {
 });
 
 
+//process_fast keypress
+$("body").on("click", ".process_fast", function(e) {
+        msg = "]";
+
+        pid = $(this).attr("title"); 
+
+        $.ajax({
+            type: 'POST',
+            url: 'process_command.php',
+            data: {
+                user: $('#username').val(),
+                msg: msg,
+                pid:pid
+            },
+            success: function(msg) {
+                console.log('process_command.php: ');
+                console.log(msg);
+            }
+        });
+});
+//process_slow keypress
+$("body").on("click", ".process_slow", function(e) {
+        msg = "[";
+
+        pid = $(this).attr("title"); 
+
+        $.ajax({
+            type: 'POST',
+            url: 'process_command.php',
+            data: {
+                user: $('#username').val(),
+                msg: msg,
+                pid:pid
+            },
+            success: function(msg) {
+                console.log('process_command.php: ');
+                console.log(msg);
+            }
+        });
+});
 //process_command keypress
 $("body").on("keypress", ".process_command", function(e) {
     if (e.keyCode == 13 && $(this).val() != "") {
