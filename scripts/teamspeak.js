@@ -70,7 +70,6 @@ function handle_payload_teamspeakchat(payload_teamspeakchat){
         msg = e.msg;
 
         if ((e.msg).search(/\[URL\](.*)\[\/URL\]/g) != -1) {
-            msg = "[URL]https://www.youtube.com/watch?v=dQw4w9WgXcQ[/URL]"
             msg = msg.replace(/\[URL\]/g, '<a target="_blank" href="');
             msg = msg.replace(/\[\/URL\]/g, '">' + ((e.msg).match(/\[URL\](.*)\[\/URL\]/i))[1] + '</a>');
         }
