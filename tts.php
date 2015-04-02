@@ -30,12 +30,6 @@ function multipleExplodeKeepDelimiters($delimiters, $string) {
     return $finalArray;
 }}
 $vitsi = str_replace('"',"'",$_POST['vitsi']);
-$vitsi = utf8_strrev($vitsi);
-    function utf8_strrev($str){
-            preg_match_all('/./us', $str, $ar);
-                return join('', array_reverse($ar[0]));
-    }
-
 if (strlen($vitsi) == 1)
     $vitsi = str_replace('?'," kysymysmerkki ",$vitsi);
 if (key_exists('kieli',$_POST))
