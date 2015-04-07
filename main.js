@@ -1,12 +1,11 @@
-
 /* 
  * EMOTICONS
  */
 
 
-//Poista hymi�
+//Poista hymiö
 $('body').on("click", ".deleteemo", function() {
-    if (confirm("Oletko varma, ett� haluat poistaa hymi�n?")) {
+    if (confirm("Oletko varma, että haluat poistaa hymiön?")) {
         var s = $(this).next().html();
         console.log(s);
         $.ajax({
@@ -21,7 +20,7 @@ $('body').on("click", ".deleteemo", function() {
 });
 
 
-//Klikkaa hymi�t�
+//Klikkaa hymiötä
 $('body').on("click", "img.emoticon", function(e) {
     if ($('#tts').val() == $('#tts').attr('alt'))
         $('#tts').val("");
@@ -55,7 +54,8 @@ function handle_payload_emoticons(payload_emoticons) {
 
     $('#emoticons_tab ul').html(newhtml_tab);
 
-}function longPoll(loop) {
+}
+function longPoll(loop) {
     console.log("starting stream! session = " + session);
     known_users = [];
 
@@ -135,38 +135,7 @@ function handle_payload_emoticons(payload_emoticons) {
                     }
 
                     if (payload.vitsit != undefined) {
-                        vitsit_revision = payload.vitsit.pop();
-                        $('#vitsit').html('<ul></ul>');
-                        newhtml = '';
-                        $.each(payload.vitsit, function(i, vitsi) {
-                            newhtml += '<li data-rowid="' +
-                                vitsi.rowid +
-                                '"><button style="padding:2px;min-width:40px;" class="deletevitsi">X</button><button class="vitsi_rate">lisää memeihin</button>' +
-                                vitsi.vitsi +
-                                '</li>';
-                        });
-                        $('#vitsit ul').html(newhtml);
-                        $('.vitsi_rate').click(function(){
-                            $(this).after('<div id="vitsi_raty"></div>');
-                            $('#vitsi_raty').raty({path:'images/raty',
-                                            click:function(score){
-                                                console.log("rowid = "+$(this).parent().attr('data-rowid'));
-                                                $.ajax({
-                                                    url:'ratememe.php',
-                                                    type:'POST',
-                                                    data:{rating:score,
-                                                        user:session,
-                                                        vitsi:$(this).parent().attr('data-rowid')},
-                                                    success:function(data){
-                                                    console.log(data);
-                                                    }
-                                                })
-                                                $(this).remove();
-                                            }
-                                                });
-                        });
-
-
+                        handle_payload_vitsit(payload.vitsit);
                     }
                     if (payload.emoticons != undefined) {
                         handle_payload_emoticons(payload.emoticons);
@@ -1605,7 +1574,38 @@ function handle_payload_teamspeakchat(payload_teamspeakchat){
 
     }
 }
-﻿
+﻿function handle_payload_vitsit(vitsit) {
+    vitsit_revision = vitsit.pop();
+    $('#vitsit').html('<ul></ul>');
+    newhtml = '';
+    $.each(vitsit, function(i, vitsi) {
+        newhtml += '<li data-rowid="' +
+            vitsi.rowid +
+            '"><button style="padding:2px;min-width:40px;" class="deletevitsi">X</button><button class="vitsi_rate">lisää memeihin</button>' +
+            vitsi.vitsi +
+            '</li>';
+    });
+    $('#vitsit ul').html(newhtml);
+    $('.vitsi_rate').click(function(){
+        $(this).after('<div id="vitsi_raty"></div>');
+        $('#vitsi_raty').raty({path:'images/raty',
+                        click:function(score){
+                            console.log("rowid = "+$(this).parent().attr('data-rowid'));
+                            $.ajax({
+                                url:'ratememe.php',
+                                type:'POST',
+                                data:{rating:score,
+                                    user:session,
+                                    vitsi:$(this).parent().attr('data-rowid')},
+                                success:function(data){
+                                console.log(data);
+                                }
+                            })
+                            $(this).remove();
+                        }
+                            });
+    });
+}
 
 /* 
  * VITSIT
@@ -1722,7 +1722,8 @@ function deleteVitsi(id) {
         type: 'POST',
         url: 'vitsisivusc.php'
     });
-}/**
+}
+/**
  * @author       Rob W <gwnRob@gmail.com>
  * @website      http://stackoverflow.com/a/7513356/938089
  * @version      20131010

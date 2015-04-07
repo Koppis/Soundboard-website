@@ -1,4 +1,35 @@
-﻿
+﻿function handle_payload_vitsit(vitsit) {
+    vitsit_revision = vitsit.pop();
+    $('#vitsit').html('<ul></ul>');
+    newhtml = '';
+    $.each(vitsit, function(i, vitsi) {
+        newhtml += '<li data-rowid="' +
+            vitsi.rowid +
+            '"><button style="padding:2px;min-width:40px;" class="deletevitsi">X</button><button class="vitsi_rate">lisää memeihin</button>' +
+            vitsi.vitsi +
+            '</li>';
+    });
+    $('#vitsit ul').html(newhtml);
+    $('.vitsi_rate').click(function(){
+        $(this).after('<div id="vitsi_raty"></div>');
+        $('#vitsi_raty').raty({path:'images/raty',
+                        click:function(score){
+                            console.log("rowid = "+$(this).parent().attr('data-rowid'));
+                            $.ajax({
+                                url:'ratememe.php',
+                                type:'POST',
+                                data:{rating:score,
+                                    user:session,
+                                    vitsi:$(this).parent().attr('data-rowid')},
+                                success:function(data){
+                                console.log(data);
+                                }
+                            })
+                            $(this).remove();
+                        }
+                            });
+    });
+}
 
 /* 
  * VITSIT
