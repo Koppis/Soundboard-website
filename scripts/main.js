@@ -74,15 +74,22 @@ function changeFavicon(src) {
 
 //Kun ikkunaan tulee focus/pois focus
 $(window).on('focus', function() {
-    document.title = "Koppislandia";
     focusvar = 1;
-    happening = false;
-    changeFavicon("/kappa.png");
+    set_tab_blinking(false);
 });
 $(window).blur(function() {
     focusvar = 0;
 });
-
+function set_tab_blinking(state) {
+    if (state) {
+        happening = true;
+        changeFavicon("images/alertfavicon.ico")
+    } else {
+        document.title = "Koppislandia";
+        happening = false;
+        changeFavicon("images/favicon.ico");
+    }
+}
 //Yritä disconnectia vielä, ettei hyvällä tuurilla tarvitse timeouttia
 $(window).on("beforeunload", function() {
     $.ajax({
@@ -151,7 +158,7 @@ console.log('pressed sbutton ' + $(this).val());
 
 //DOCUMENT READY ALKAA
 $(document).ready(function() {
-    changeFavicon("/kappa.png");
+    changeFavicon("images/favicon.ico");
 
     disablejukebox();
 

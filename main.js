@@ -1,11 +1,12 @@
+
 /* 
  * EMOTICONS
  */
 
 
-//Poista hymiö
+//Poista hymi�
 $('body').on("click", ".deleteemo", function() {
-    if (confirm("Oletko varma, että haluat poistaa hymiön?")) {
+    if (confirm("Oletko varma, ett� haluat poistaa hymi�n?")) {
         var s = $(this).next().html();
         console.log(s);
         $.ajax({
@@ -20,7 +21,7 @@ $('body').on("click", ".deleteemo", function() {
 });
 
 
-//Klikkaa hymiötä
+//Klikkaa hymi�t�
 $('body').on("click", "img.emoticon", function(e) {
     if ($('#tts').val() == $('#tts').attr('alt'))
         $('#tts').val("");
@@ -54,8 +55,7 @@ function handle_payload_emoticons(payload_emoticons) {
 
     $('#emoticons_tab ul').html(newhtml_tab);
 
-}
-function longPoll(loop) {
+}function longPoll(loop) {
     console.log("starting stream! session = " + session);
     known_users = [];
 
@@ -114,9 +114,9 @@ function longPoll(loop) {
 
                         });
                         //Vilkkuminen
+
                         if (focusvar == 0 && newhtml !== '') {
-                            happening = true;
-                            changeFavicon("/images/kapparoll/tmp-0.gif")
+                            set_tab_blinking(true);
 
                         }
 
@@ -291,15 +291,22 @@ function changeFavicon(src) {
 
 //Kun ikkunaan tulee focus/pois focus
 $(window).on('focus', function() {
-    document.title = "Koppislandia";
     focusvar = 1;
-    happening = false;
-    changeFavicon("/kappa.png");
+    set_tab_blinking(false);
 });
 $(window).blur(function() {
     focusvar = 0;
 });
-
+function set_tab_blinking(state) {
+    if (state) {
+        happening = true;
+        changeFavicon("images/alertfavicon.ico")
+    } else {
+        document.title = "Koppislandia";
+        happening = false;
+        changeFavicon("images/favicon.ico");
+    }
+}
 //Yritä disconnectia vielä, ettei hyvällä tuurilla tarvitse timeouttia
 $(window).on("beforeunload", function() {
     $.ajax({
@@ -368,7 +375,7 @@ console.log('pressed sbutton ' + $(this).val());
 
 //DOCUMENT READY ALKAA
 $(document).ready(function() {
-    changeFavicon("/kappa.png");
+    changeFavicon("images/favicon.ico");
 
     disablejukebox();
 
@@ -1568,10 +1575,7 @@ function handle_payload_teamspeakchat(payload_teamspeakchat){
     });
     $('#teamspeakchat').prepend(toappend);
     if (focusvar == 0) {
-        happening = true;
-        changeFavicon("/images/kapparoll/tmp-0.gif")
-
-
+        set_tab_blinking(true);
     }
 }
 ﻿function handle_payload_vitsit(vitsit) {

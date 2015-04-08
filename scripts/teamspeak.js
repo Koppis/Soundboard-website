@@ -79,9 +79,6 @@ function handle_payload_teamspeakchat(payload_teamspeakchat){
     });
     $('#teamspeakchat').prepend(toappend);
     if (focusvar == 0) {
-        happening = true;
-        changeFavicon("/images/kapparoll/tmp-0.gif")
-
-
+        set_tab_blinking(true);
     }
 }

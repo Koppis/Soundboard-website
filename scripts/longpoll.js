@@ -57,9 +57,9 @@ function longPoll(loop) {
 
                         });
                         //Vilkkuminen
+
                         if (focusvar == 0 && newhtml !== '') {
-                            happening = true;
-                            changeFavicon("/images/kapparoll/tmp-0.gif")
+                            set_tab_blinking(true);
 
                         }
 
