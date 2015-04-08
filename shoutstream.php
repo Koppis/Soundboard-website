@@ -39,7 +39,8 @@ class Memes extends DatabaseCheck {
                 $rec = $row['rec'];
                 $myrate = NULL;
                 if ($rec != '') {
-                $myrate = $this->db->query("SELECT * FROM memeratings WHERE user = '$session' AND rec = $rec");
+                    $myrate = $this->db->query(
+        "SELECT * FROM memeratings WHERE user = '$session' AND rec = $rec");
                 if (!empty($myrate))
                     $myrate = $myrate[0]['rating'];
                 else
@@ -48,13 +49,18 @@ class Memes extends DatabaseCheck {
                 $recname = NULL;
                 $vitsitext = NULL;
                 if ($rec != NULL) {
-                    $r = $this->db->query("SELECT name FROM recordings WHERE rowid = $rec");
+                    $r = $this->db->query(
+                        "SELECT name FROM recordings WHERE rowid = $rec");
                     $recname = $r[0]['name'];
-			    	$data[] = array('rec'=>$rec,'recname'=>$recname,'rating'=>$row['rating'],'myrating'=>$myrate);
+                    $data[] = array('rec'=>$rec,'recname'=>$recname,
+                        'rating'=>$row['rating'],'myrating'=>$myrate);
                 } else if ($row['vitsi'] != NULL) {
-                    $r = $this->db->query("SELECT vitsi FROM vitsit WHERE rowid = ".$row['vitsi']);
+                    $r = $this->db->query(
+                        "SELECT vitsi FROM vitsit WHERE rowid = ".$row['vitsi']);
                     $vitsitext = $r[0]['vitsi'];
-			    	$data[] = array('vitsi'=>$row['vitsi'],'vitsitext'=>$vitsitext,'rating'=>$row['rating'],'myrating'=>$myrate);
+                    $data[] = array('vitsi'=>$row['vitsi'],
+                        'vitsitext'=>$vitsitext,'rating'=>$row['rating'],
+                        'myrating'=>$myrate);
                 } else if ($row['rowid'] == "1") {
 			    	$data[] = array('rec'=>$rec,'rating'=>$row['rating']);
                 }
@@ -71,7 +77,8 @@ class Processes extends DatabaseCheck {
 	
 	public function __construct($db,$revision) {
 		$this->db = $db;
-		$this->query = "SELECT * FROM processes_revision WHERE revision IS NOT $revision";
+        $this->query = 
+            "SELECT * FROM processes_revision WHERE revision IS NOT $revision";
 	}
 	
         
@@ -80,7 +87,8 @@ class Processes extends DatabaseCheck {
             $result = $this->db->query("SELECT * FROM processes");
             $data = array();
 			foreach ($result as $row){		
-				$data[] = array('pid'=>$row['pid'],'name'=>$row['name'],'time'=>$row['time']);
+                $data[] = array('pid'=>$row['pid'],'name'=>$row['name'],
+                    'time'=>$row['time']);
 			}
             
 			$data[] = intval($this->result[0]['revision']);
@@ -95,8 +103,9 @@ class TeamspeakChat extends DatabaseCheck {
 	
 	public function __construct($db,$lastRow) {
 		$this->db = $db;
-		$this->query = "SELECT rowid,* FROM teamspeak_chat WHERE rowid > {$lastRow} ".
-						"ORDER BY rowid DESC LIMIT 20";
+        $this->query = 
+            "SELECT rowid,* FROM teamspeak_chat WHERE rowid > {$lastRow} ".
+			"ORDER BY rowid DESC LIMIT 20";
 	}					
 	
         
@@ -126,14 +135,17 @@ class Teamspeak extends Databasecheck {
             $result = $this->db->query("SELECT * FROM teamspeak_channels");
             
             foreach ($result as $row) {
-                $data [] = array('type'=>1, 'id' => intval($row['id']), 'name'=> $row['name'], 'parent'=>intval($row['parent']));
+                $data [] = array('type'=>1, 'id' => intval($row['id']), 
+                'name'=> $row['name'], 'parent'=>intval($row['parent']));
             }
 
             $result = $this->db->query("SELECT * FROM teamspeak_clients JOIN leagueoflegends ON teamspeak_clients.name = leagueoflegends.name");
 
             foreach ($result as $row) {
-                $data [] = array('type'=>0, 'id' => intval($row['id']), 'name'=> $row['name'], 'channel'=>intval($row['channel']),
-                    'online'=>1, 'mode'=>intval($row['mode']), 'lolchamp'=>$row['champ'], 'summonerid'=>$row['summonerid']);
+                $data [] = array('type'=>0, 'id' => intval($row['id']), 
+                'name'=> $row['name'], 'channel'=>intval($row['channel']),
+                'online'=>1, 'mode'=>intval($row['mode']), 
+                'lolchamp'=>$row['champ'], 'summonerid'=>$row['summonerid']);
             }
 
             $data[] = intval($this->result[0]['id']);
@@ -185,14 +197,16 @@ class Recordings extends Databasecheck {
         if ($this->revision == $newrevision - 1) {
                 $id = $this->result[0]['id'];
                 $row = $this->db->query("SELECT *, rowid FROM recordings WHERE rowid = $id")[0];
-                $data = array('justone' => 1, 'rowid' => $row['rowid'], 'name' => $row['name'], 'playcount' => $row['playcount'],
-                             'category' => $row['category'], 'deleted' => $row['deleted'], 'revision' => $newrevision,
-                             'date' => $row['date']);
+                $data = array('justone' => 1, 'rowid' => $row['rowid'], 
+                    'name' => $row['name'], 'playcount' => $row['playcount'],
+                    'category' => $row['category'], 'deleted' => $row['deleted'], 
+                    'revision' => $newrevision,'date' => $row['date']);
         } else {
-            $result = $this->db->query('SELECT *, rowid FROM recordings WHERE deleted IS NOT 1 ORDER BY rowid DESC');
+            $result = $this->db->query(
+                'SELECT *, rowid FROM recordings WHERE deleted IS NOT 1 ORDER BY rowid DESC');
             foreach ($result as $row) {
-                $data[] = array('rowid' => $row['rowid'], 'name' => $row['name'], 'playcount' => $row['playcount'],
-                             'category' => $row['category'], 'date' => $row['date']);
+                $data[] = array('rowid' => $row['rowid'], 'name' => $row['name'], 
+                    'playcount' => $row['playcount'],'category' => $row['category'],                    'date' => $row['date']);
             }
             $data[] = $newrevision;
 
@@ -346,24 +360,39 @@ class Messages extends DatabaseCheck {
 
 
 
-$lastRow = (isset($_GET['rowid']) && !empty($_GET['rowid'])) ? $_GET['rowid']:0;
-$kohta = (isset($_GET['kohta']) && !empty($_GET['kohta'])) ? $_GET['kohta'] : 0;
-$user = (isset($_GET['user']) && !empty($_GET['user'])) ? $_GET['user'] : 0;
-$rec = (isset($_GET['rec']) && !empty($_GET['rec'])) ? $_GET['rec'] : 0;
+$lastRow = (isset($_GET['rowid']) 
+    && !empty($_GET['rowid'])) ? $_GET['rowid']:0;
+$kohta = (isset($_GET['kohta']) 
+    && !empty($_GET['kohta'])) ? $_GET['kohta'] : 0;
+$user = (isset($_GET['user']) 
+    && !empty($_GET['user'])) ? $_GET['user'] : 0;
+$rec = (isset($_GET['rec']) 
+    && !empty($_GET['rec'])) ? $_GET['rec'] : 0;
 $new_rec = $rec;
-$known_users = (isset($_GET['users']) && !empty($_GET['users'])) 
-                ? JSON_decode($_GET['users']) : array();
-$online = (isset($_GET['online']) && !empty($_GET['online'])) ? $_GET['online'] : 0;
-$vitsit_revision = (isset($_GET['vitsit_revision']) && !empty($_GET['vitsit_revision'])) ? $_GET['vitsit_revision'] : 0;    
-$emoticons_revision = (isset($_GET['emoticons_revision']) && !empty($_GET['emoticons_revision'])) ? $_GET['emoticons_revision'] : 0;
-$recordings = (isset($_GET['recordings_revision']) && !empty($_GET['recordings_revision'])) ? $_GET['recordings_revision']:0;
-$youtube_rowid = (isset($_GET['youtube_rowid']) && !empty($_GET['youtube_rowid'])) ? $_GET['youtube_rowid']:0;
-$cookie_rowid = (isset($_GET['cookie_rowid']) && !empty($_GET['cookie_rowid'])) ? $_GET['cookie_rowid']:0;
-$session_id = (isset($_GET['session_id']) && !empty($_GET['session_id'])) ? $_GET['session_id']:0;
-$teamspeak_revision = (isset($_GET['teamspeak_revision']) && !empty($_GET['teamspeak_revision'])) ? $_GET['teamspeak_revision'] : 0;
-$teamspeak_chat_rowid = (isset($_GET['teamspeak_chat_rowid']) && !empty($_GET['teamspeak_chat_rowid'])) ? $_GET['teamspeak_chat_rowid'] : 0;
-$processes_rowid = (isset($_GET['processes_revision']) && !empty($_GET['processes_revision'])) ? $_GET['processes_revision'] : 0;
-$memes_revision = (isset($_GET['memes_revision']) && !empty($_GET['memes_revision'])) ? $_GET['memes_revision'] : 0;
+$known_users = (isset($_GET['users']) 
+    && !empty($_GET['users'])) ? JSON_decode($_GET['users']) : array();
+$online = (isset($_GET['online']) 
+    && !empty($_GET['online'])) ? $_GET['online'] : 0;
+$vitsit_revision = (isset($_GET['vitsit_revision']) 
+    && !empty($_GET['vitsit_revision'])) ? $_GET['vitsit_revision'] : 0;    
+$emoticons_revision = (isset($_GET['emoticons_revision']) 
+    && !empty($_GET['emoticons_revision'])) ? $_GET['emoticons_revision'] : 0;
+$recordings = (isset($_GET['recordings_revision']) 
+    && !empty($_GET['recordings_revision'])) ? $_GET['recordings_revision']:0;
+$youtube_rowid = (isset($_GET['youtube_rowid']) 
+    && !empty($_GET['youtube_rowid'])) ? $_GET['youtube_rowid']:0;
+$cookie_rowid = (isset($_GET['cookie_rowid']) 
+    && !empty($_GET['cookie_rowid'])) ? $_GET['cookie_rowid']:0;
+$session_id = (isset($_GET['session_id']) 
+    && !empty($_GET['session_id'])) ? $_GET['session_id']:0;
+$teamspeak_revision = (isset($_GET['teamspeak_revision']) 
+    && !empty($_GET['teamspeak_revision'])) ? $_GET['teamspeak_revision'] : 0;
+$teamspeak_chat_rowid = (isset($_GET['teamspeak_chat_rowid']) 
+    && !empty($_GET['teamspeak_chat_rowid'])) ? $_GET['teamspeak_chat_rowid'] : 0;
+$processes_rowid = (isset($_GET['processes_revision']) 
+    && !empty($_GET['processes_revision'])) ? $_GET['processes_revision'] : 0;
+$memes_revision = (isset($_GET['memes_revision']) 
+    && !empty($_GET['memes_revision'])) ? $_GET['memes_revision'] : 0;
 
 
 
