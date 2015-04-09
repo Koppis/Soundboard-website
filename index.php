@@ -57,6 +57,9 @@
                     <br />
                     <div id="teamspeak"></div> 
 
+<div id="github_commits"><iframe  src="
+http://tylerlh.github.com/github-latest-commits-widget/?username=Koppis&repo=Soundboard-website&limit=7"
+  allowtransparency="true" frameborder="0" scrolling="no" width="502px" height="252px"></iframe></div>
 			</td>
 			<td colspan="1" width="80%" valign="top">
 				<div id="tabs">

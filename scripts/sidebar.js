@@ -4,6 +4,9 @@
  * SIDEBAR
  * ***************************************************************************************
  */
+$('#github_commits').hover(function(){ 
+                $('#github_commits').toggleClass("hover");
+                        });
 function syncyoutube() {
     var processpingtime = (new Date().getTime());
     $.ajax({
